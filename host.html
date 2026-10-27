@@ -6,7 +6,7 @@
 <title>Nova Raid — Host</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <style>
 body{overflow:hidden;height:100vh}
 #app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
@@ -139,8 +139,8 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
       </div>
       <div class="settings">
         <label>Số đội <select id="setTeams"></select></label>
-        <label>Độ khó boss <select id="setDiff"><option value="1600">Dễ</option><option value="2300" selected>Vừa</option><option value="3000">Khó</option></select></label>
-        <label>Thời gian đánh <select id="setTime"><option value="600">10 phút</option><option value="720" selected>12 phút</option><option value="900">15 phút</option><option value="1080">18 phút</option></select></label>
+        <label>Boss chết lúc <select id="setDiff"><option value="0.8">~80% thời gian</option><option value="0.9" selected>~90% thời gian</option><option value="1.02">sát giờ (khó)</option></select></label>
+        <label>Thời gian đánh <select id="setTime"><option value="900">15 phút</option><option value="1080">18 phút</option><option value="1200" selected>20 phút</option><option value="1320">22 phút</option><option value="1500">25 phút</option></select></label>
       </div>
       <div class="teamgrid" id="teamGrid"></div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -180,9 +180,9 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/qrcode.js"></script>
-<script src="common.js?v=3"></script>
-<script src="questions.js?v=3"></script>
-<script src="sky.js?v=3"></script>
+<script src="common.js?v=4"></script>
+<script src="questions.js?v=4"></script>
+<script src="sky.js?v=4"></script>
 <script>
 (function(){
 const $ = s=>document.querySelector(s);
@@ -204,7 +204,7 @@ let client = null, T = null;
 const KEY = r=>'nr_host_'+r;
 
 function newState(room, brokerIdx){
-  return { room, brokerIdx, status:'lobby', phase:1, hp:0, hpMax:0, hpPerTeam:2300, timeLimit:720,
+  return { room, brokerIdx, status:'lobby', phase:1, hp:0, hpMax:0, killAt:0.9, timeLimit:1200,
            elapsed:0, runningSince:null, teams: makeTeams(6, []), log:[], announceUntil:0, endReason:null };
 }
 function makeTeams(n, old){
@@ -323,8 +323,8 @@ function finishQ(t, ok, secs, timeout){
     if(c.phase===2 && secs > (PH[2].shield+0.6)){ blocked=true; }
     else {
       const speed = Math.max(0, 1 - secs/c.limit);
-      dmg = Math.round(100 + 60*speed);
-      if(c.phase===3) dmg = Math.round(dmg*1.2);
+      dmg = Math.round((100 + 60*speed) * (c.phase===3?1.2:1) * pace());
+      dmg = Math.max(10, dmg);
     }
     t.hits++;
   } else {
@@ -338,6 +338,16 @@ function finishQ(t, ok, secs, timeout){
   else fxMiss(t);
   renderChips(); pushState();
   setTimeout(()=>{ if(S.status==='battle' && !t.cur) nextQ(t); }, 1600);
+}
+// Pacing: boss auto-balances so it dies near killAt × time limit, however fast or slow the class is.
+// Same multiplier for every team at a given moment → team ranking stays fair.
+function pace(){
+  const T = S.timeLimit * (S.killAt||0.9); const t = elapsed();
+  const target = S.hpMax * Math.max(0, 1 - t/T);
+  const diff = (S.hp - target) / S.hpMax;          // >0 boss healthier than schedule, <0 boss dying too fast
+  if(diff < -0.01) return Math.max(0.08, 1 + (diff+0.01)*15);
+  if(diff > 0.03)  return Math.min(5, 1 + (diff-0.03)*12);
+  return 1;
 }
 function applyDamage(t, dmg){
   t.dmg += dmg; S.hp = Math.max(0, S.hp - dmg);
@@ -354,8 +364,8 @@ async function startBattle(){
   if(!netOk){ toast('Chưa kết nối máy chủ!'); return; }
   const joined = S.teams.filter(t=>t.cid).length;
   if(joined < S.teams.length && !(await NR.ask(`Mới có ${joined}/${S.teams.length} đội vào phòng. Vẫn bắt đầu?`,'Bắt đầu'))) return;
-  S.hpPerTeam = +$('#setDiff').value; S.timeLimit = +$('#setTime').value;
-  S.hpMax = S.hpPerTeam * S.teams.length; S.hp = S.hpMax; S.phase=1; S.elapsed=0;
+  S.killAt = +$('#setDiff').value; S.timeLimit = +$('#setTime').value;
+  S.hpMax = Math.round(S.teams.length * 450 * S.timeLimit/60 / 100) * 100; S.hp = S.hpMax; S.phase=1; S.elapsed=0;
   S.teams.forEach(t=>{ t.dmg=0;t.hits=0;t.miss=0;t.pen=0;t.manual=0;t.cur=null; });
   S.status='announce'; S.runningSince=null; save();
   show('battle'); renderChips(); updateHP(); setBossPhase();
@@ -415,7 +425,7 @@ function renderQR(){
 function renderSettings(){
   const sel=$('#setTeams'); sel.innerHTML='';
   for(let i=2;i<=12;i++){ const o=document.createElement('option'); o.value=i; o.textContent=i+' đội'; if(i===S.teams.length) o.selected=true; sel.appendChild(o); }
-  $('#setDiff').value=String(S.hpPerTeam); $('#setTime').value=String(S.timeLimit);
+  $('#setDiff').value=String(S.killAt||0.9); $('#setTime').value=String(S.timeLimit);
 }
 function renderLobbyTeams(){
   const g=$('#teamGrid');
@@ -582,7 +592,7 @@ $('#results').addEventListener('click', e=>{ if(e.target.id==='results') $('#res
 
 // ---------------- LOBBY HANDLERS ----------------
 $('#setTeams').addEventListener('change', e=>{ S.teams = makeTeams(+e.target.value, S.teams); $('#teamGrid').innerHTML=''; renderLobbyTeams(); pushState(true); });
-$('#setDiff').addEventListener('change', e=>{ S.hpPerTeam=+e.target.value; save(); });
+$('#setDiff').addEventListener('change', e=>{ S.killAt=+e.target.value; save(); });
 $('#setTime').addEventListener('change', e=>{ S.timeLimit=+e.target.value; save(); });
 $('#btnStart').onclick=()=>{ NR.ac(); startBattle(); };
 $('#btnRules').onclick=()=>{
