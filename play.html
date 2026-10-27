@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#060a1f">
+<title>Nova Raid — Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+body{min-height:100vh;min-height:100dvh}
+#app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.brand{font-family:var(--disp);font-weight:900;letter-spacing:.1em;font-size:18px}.brand span{color:var(--orange)}
+.tag{font-size:13px;font-weight:700;padding:6px 10px;border-radius:999px;border:1.5px solid var(--c,#fff);color:var(--c,#fff);display:flex;align-items:center;gap:6px;max-width:55%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:#666;flex:none}.dot.on{background:var(--teal);box-shadow:0 0 6px var(--teal)}
+main{flex:1;display:flex;flex-direction:column}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+h1{font-family:var(--disp);font-weight:900;font-size:30px;line-height:1.1}
+.sub{color:var(--mute);font-size:15px;line-height:1.5}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.tbtn{padding:16px 10px;border-radius:14px;border:2px solid var(--c);background:rgba(255,255,255,.04);font-weight:800;color:var(--c);font-size:16px;position:relative}
+.tbtn small{display:block;font-weight:600;color:var(--mute);font-size:11px;margin-top:4px}
+.tbtn.taken{opacity:.5}
+.codein{display:flex;gap:8px;width:100%}.codein input{flex:1;text-transform:uppercase;font-family:var(--disp);letter-spacing:.2em;font-size:22px;text-align:center}
+.phase{font-family:var(--disp);font-size:12px;font-weight:900;letter-spacing:.12em;padding:5px 10px;border-radius:999px;border:1.5px solid currentColor;align-self:flex-start}
+.bar{height:10px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:12px 0 4px;position:relative}
+.bar i{position:absolute;inset:0;transform-origin:left;background:linear-gradient(90deg,var(--teal),var(--gold))}
+.bar b{position:absolute;top:0;bottom:0;left:0;background:rgba(93,240,255,.35);border-right:2px solid #5df0ff}
+.tl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
+.prompt{font-size:22px;font-weight:800;line-height:1.35;margin:16px 0 14px}
+.kind{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em;margin-top:6px}
+.speak{align-self:center;width:96px;height:96px;border-radius:50%;font-size:40px;background:radial-gradient(circle,#2b3590,#141a52);border:2px solid var(--teal);box-shadow:0 0 30px rgba(62,230,200,.35);margin:4px 0 16px}
+.opts{display:grid;gap:10px;margin-top:auto}
+.opt{width:100%;text-align:left;padding:16px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:2px solid var(--line);font-size:18px;font-weight:700;display:flex;gap:12px;align-items:center;min-height:58px}
+.opt .l{font-family:var(--disp);width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.1);font-size:14px;flex:none}
+.opt.sel{border-color:var(--gold);background:rgba(255,201,74,.15)}
+.opt.right{border-color:var(--teal);background:rgba(62,230,200,.18)}
+.opt.wrong{border-color:var(--red);background:rgba(255,77,94,.15)}
+.opt:disabled{cursor:default}
+.res{font-family:var(--disp);font-weight:900;font-size:44px;line-height:1.1}
+.stats{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:13px;color:var(--mute)}
+.stats b{color:var(--ink);font-family:var(--disp)}
+.mini{font-size:12px;color:var(--mute);text-decoration:underline;background:none;margin-top:6px}
+.big-num{font-family:var(--disp);font-weight:900;font-size:56px;color:var(--gold)}
+</style>
+</head>
+<body>
+<canvas class="sky" id="sky"></canvas>
+<div id="app">
+  <header>
+    <div class="brand">NOVA <span>RAID</span></div>
+    <div class="tag" id="tag"><span class="dot" id="dot"></span><span id="tagName">Connecting…</span></div>
+  </header>
+  <main id="main"></main>
+  <div class="stats hidden" id="stats"><span>Damage <b id="sDmg">0</b></span><span>Rank <b id="sRank">–</b></span><span>Penalty <b id="sPen">0</b> ✦</span></div>
+</div>
+<script src="vendor/mqtt.min.js"></script>
+<script src="common.js"></script>
+<script src="sky.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s), main=$('#main');
+const room=(NR.qs('r')||'').toUpperCase(); const bidx=+(NR.qs('b')||0);
+const CID = NR.store('nr_cid') || (()=>{ const c=NR.rid(8); NR.store('nr_cid',c); return c; })();
+const KEY='nr_play_'+room;
+let client=null, T=null, st=null, myTeam=NR.store(KEY), cur=null, timerIv=null, answered=false, lastRes=null, ttsOk=('speechSynthesis' in window), ended=false;
+
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function setTag(){
+  const t = st && myTeam && st.teams.find(x=>x.id===myTeam);
+  $('#tagName').textContent = t ? t.name : (client&&client.connected ? 'No team' : 'Connecting…');
+  document.documentElement.style.setProperty('--c', t ? t.color : '#fff');
+  $('#tag').style.setProperty('--c', t ? t.color : '#fff');
+  if(t){ $('#stats').classList.remove('hidden'); $('#sDmg').textContent=t.dmg.toLocaleString('en'); $('#sRank').textContent='#'+t.rank; }
+}
+
+// ---------- no room code: ask for it ----------
+if(!room){
+  main.innerHTML=`<div class="center"><h1>Join the Raid</h1><div class="sub">Nhập mã phòng trên màn chiếu</div>
+  <div class="codein"><input id="code" maxlength="6" placeholder="CODE" autocomplete="off"><button class="btn primary" id="go">GO</button></div></div>`;
+  $('#go').onclick=()=>{ const c=$('#code').value.trim().toUpperCase(); if(c) location.href='play.html?r='+c+'&b=0'; };
+  return;
+}
+
+// ---------- network ----------
+function connect(){
+  main.innerHTML=`<div class="center"><h1>Connecting…</h1><div class="sub">Đang kết nối phòng <b>${esc(room)}</b></div></div>`;
+  client = mqtt.connect(NR.brokerUrl(bidx), { clientId:'nrp_'+NR.rid(10), keepalive:20, reconnectPeriod:2000, connectTimeout:8000, clean:true });
+  T = NR.topics(room);
+  client.on('connect', ()=>{ $('#dot').classList.add('on'); client.subscribe(T.all,{qos:1}); if(myTeam){ client.subscribe(T.team(myTeam),{qos:1}); hello(); } setTag(); if(!st) waitState(); });
+  client.on('offline', ()=>$('#dot').classList.remove('on'));
+  client.on('close', ()=>$('#dot').classList.remove('on'));
+  client.on('message', (topic, buf)=>{ const s=buf.toString(); if(!s) { if(topic===T.all){ st=null; roomGone(); } return; } let m; try{ m=JSON.parse(s);}catch(e){return;}
+    if(topic===T.all) onState(m); else onTeamMsg(m); });
+}
+function waitState(){ setTimeout(()=>{ if(!st) main.innerHTML=`<div class="center"><h1>Room not found</h1><div class="sub">Không thấy phòng <b>${esc(room)}</b>. Kiểm tra lại mã QR trên màn chiếu, hoặc chờ host mở phòng.</div><button class="btn" onclick="location.reload()">Thử lại</button></div>`; }, 6000); }
+function roomGone(){ main.innerHTML=`<div class="center"><h1>Room closed</h1><div class="sub">Phòng này đã đóng. Quét mã QR mới trên màn chiếu.</div></div>`; }
+function send(obj){ if(client&&client.connected) client.publish(T.up, JSON.stringify(Object.assign({team:myTeam,cid:CID},obj)), {qos:1}); }
+function hello(){ send({type:'hello', tts:ttsOk}); }
+setInterval(()=>{ if(myTeam) send({type:'ping'}); }, 5000);
+
+function onState(m){
+  const prev = st; st=m; setTag();
+  if(!myTeam){ renderPicker(); return; }
+  if(!st.teams.find(t=>t.id===myTeam)){ myTeam=null; NR.storeDel(KEY); renderPicker(); return; }
+  if(m.status==='lobby') renderWaiting();
+  else if(m.status==='announce' && (!prev || prev.status!=='announce' || prev.phase!==m.phase)) renderAnnounce();
+  else if(m.status==='paused') renderPaused();
+  else if(m.status==='won'||m.status==='lost') renderEnd();
+  else if(m.status==='battle' && (!prev || prev.status!=='battle') && !cur) main.innerHTML=`<div class="center"><h1>Ready…</h1><div class="sub">Next question incoming</div></div>`;
+}
+function onTeamMsg(m){
+  if(m.type==='kicked' && m.cid===CID){ /* another device holds team */ }
+  if(m.cid && m.cid!==CID && (m.type==='q')){ renderTaken(); return; }
+  if(m.type==='q'){ if(cur && cur.n===m.n) return; cur=m; answered=false; renderQ(); }
+  if(m.type==='res'){ if(!cur || m.n!==cur.n) return; lastRes=m; renderRes(m); }
+}
+
+// ---------- screens ----------
+function renderPicker(){
+  if(!st){ return; }
+  main.innerHTML=`<div class="center" style="justify-content:flex-start;padding-top:20px"><h1>Choose your team</h1><div class="sub">Chọn đúng đội của bạn · mỗi đội chỉ 1 điện thoại</div>
+  <div class="teams">${st.teams.map(t=>`<button class="tbtn ${t.taken?'taken':''}" style="--c:${t.color}" data-id="${t.id}">${esc(t.name)}${t.taken?'<small>đã có máy · bấm để thay</small>':''}</button>`).join('')}</div></div>`;
+  main.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>{
+    const t=st.teams.find(x=>x.id===b.dataset.id);
+    if(t.taken && !confirm(t.name+' đã có điện thoại khác. Chuyển sang máy này? (máy kia sẽ bị ngắt)')) return;
+    NR.ac(); if(ttsOk){ try{ const u=new SpeechSynthesisUtterance(' '); speechSynthesis.speak(u);}catch(e){} }
+    myTeam=t.id; NR.store(KEY,myTeam); client.subscribe(T.team(myTeam),{qos:1}); hello(); setTag(); onState(st);
+  });
+}
+function renderWaiting(){
+  const t=st.teams.find(x=>x.id===myTeam);
+  main.innerHTML=`<div class="center"><div style="font-size:64px">🚀</div><h1 style="color:${t.color}">${esc(t.name)}</h1><div class="sub">You're in! Waiting for the host to start the battle.<br>Đã vào phòng, chờ host bấm START.</div>
+  <div class="sub" style="font-size:13px;margin-top:20px">Tip: cả đội chụm lại quanh điện thoại này. Câu nghe (🔊) cần bật âm lượng to.</div>
+  <button class="mini" id="chg">Đổi đội</button></div>`;
+  $('#chg').onclick=()=>{ myTeam=null; NR.storeDel(KEY); renderPicker(); setTag(); };
+}
+const PHN={1:['PHASE 1 · THE AWAKENING','#ffc94a','Answer correctly to fire your laser. Faster = more damage!'],2:['PHASE 2 · SOLAR SHIELD','#5df0ff','Only correct answers within 5 seconds break the shield!'],3:['PHASE 3 · SUPERNOVA RAGE','#ff4d5e','Wrong answers cost your team 10 Stardust!']};
+function renderAnnounce(){ cur=null; stopTimer(); const p=PHN[st.phase]; main.innerHTML=`<div class="center"><div class="phase" style="color:${p[1]};align-self:center">${p[0]}</div><h1 style="color:${p[1]}">Get ready!</h1><div class="sub">${p[2]}</div></div>`; if(navigator.vibrate) navigator.vibrate([200,100,200]); }
+function renderPaused(){ cur=null; stopTimer(); main.innerHTML=`<div class="center"><div style="font-size:56px">⏸</div><h1>Paused</h1><div class="sub">Host đang tạm dừng trận.</div></div>`; }
+function renderTaken(){ cur=null; stopTimer(); main.innerHTML=`<div class="center"><h1>Team moved</h1><div class="sub">Đội này đang được chơi trên điện thoại khác.</div><button class="btn" id="chg">Chọn lại đội</button></div>`; $('#chg').onclick=()=>{ myTeam=null; NR.storeDel(KEY); renderPicker(); setTag(); }; }
+function speak(text){ if(!ttsOk) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=.85;
+  const v=speechSynthesis.getVoices().find(v=>/^en(-|_)US/i.test(v.lang)) || speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+function renderQ(){
+  stopTimer(); const m=cur, q=m.q, p=PHN[m.phase];
+  const kinds={spell:'Spelling',fill:'Fill in the blank',listen:'Listening',meaning:'Meaning',odd:'Odd one out'};
+  main.innerHTML=`<div class="phase" style="color:${p[1]}">${p[0]}</div>
+  <div class="bar">${m.shield?`<b style="width:${m.shield/m.limit*100}%"></b>`:''}<i id="tb"></i></div><div class="tl"><span>${m.shield?'🛡 5s to pierce the shield':'Faster = more damage'}</span><span id="tt"></span></div>
+  <div class="kind">${kinds[q.k]||''}</div>
+  <div class="prompt">${esc(q.p)}</div>
+  ${q.k==='listen'?'<button class="speak" id="spk">🔊</button>':''}
+  <div class="opts">${q.o.map((o,i)=>`<button class="opt" data-v="${esc(o)}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>`;
+  if(q.k==='listen'){ $('#spk').onclick=()=>speak(q.t); speak(q.t); }
+  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(answered) return; answered=true; b.classList.add('sel'); main.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+    send({type:'ans', n:m.n, qid:q.id, choice:b.dataset.v});
+    setTimeout(()=>{ if(cur===m && !lastResFor(m)) { answered=false; main.querySelectorAll('.opt').forEach(x=>{x.disabled=false;x.classList.remove('sel')}); } }, 4000);
+  });
+  const t0=performance.now() - (m.sinceSent||0)*1000*0; const total=m.left*1000; const start=performance.now();
+  timerIv=setInterval(()=>{ const el=performance.now()-start; const f=Math.max(0,1-el/total); const tb=$('#tb'); if(!tb) return stopTimer(); tb.style.transform=`scaleX(${f})`; $('#tt').textContent=Math.ceil(Math.max(0,total-el)/1000)+'s'; if(f<=0) stopTimer(); }, 100);
+}
+function lastResFor(m){ return lastRes && lastRes.n===m.n; }
+function stopTimer(){ if(timerIv){ clearInterval(timerIv); timerIv=null; } }
+function renderRes(r){
+  stopTimer();
+  main.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===r.correct) b.classList.add('right'); else if(b.classList.contains('sel')) b.classList.add('wrong'); });
+  let html;
+  if(r.ok && r.dmg>0){ html=`<div class="res" style="color:var(--teal)">HIT! −${r.dmg}</div>`; if(navigator.vibrate) navigator.vibrate(60); NR.SFX.correct(); }
+  else if(r.ok && r.blocked){ html=`<div class="res" style="color:#5df0ff">🛡 BLOCKED</div><div class="sub">Correct, but too slow to pierce the shield (&gt;5s)</div>`; NR.SFX.block(); }
+  else { html=`<div class="res" style="color:var(--red)">${r.timeout?'TIME UP':'MISS'}${r.pen?` −${r.pen}✦`:''}</div><div class="sub">Answer: <b>${esc(r.correct)}</b></div>`; if(navigator.vibrate) navigator.vibrate([80,60,80]); NR.SFX.wrong(); }
+  const box=document.createElement('div'); box.className='center'; box.style.flex='0'; box.style.margin='14px 0'; box.innerHTML=html;
+  const opts=main.querySelector('.opts'); if(opts) opts.before(box); else main.appendChild(box);
+  $('#sDmg').textContent=r.total.toLocaleString('en'); $('#sPen').textContent=r.pent;
+}
+function renderEnd(){
+  cur=null; stopTimer(); const won=st.status==='won';
+  const rw=(st.rewards||[]).find(x=>x.id===myTeam);
+  main.innerHTML=`<div class="center"><div style="font-size:60px">${won?'💥':'⌛'}</div><h1 style="color:${won?'var(--gold)':'var(--red)'}">${won?'SUPERNOVA DEFEATED!':'THE STAR ESCAPED'}</h1>
+  ${rw?`<div class="sub">Your team ranked <b>#${rw.rank}</b> with <b>${rw.dmg.toLocaleString('en')}</b> damage</div><div class="big-num">${rw.total>0?'+':''}${rw.total} ✦</div><div class="sub">Stardust (Top3 ${rw.rankReward?'+'+rw.rankReward:'0'} · Hạ boss ${rw.win?'+'+rw.win:'0'} · Phạt ${rw.pen?'−'+rw.pen:'0'})</div>`:''}
+  <div class="sub" style="font-size:13px">Nhận Stardust từ BTC theo màn chiếu.</div></div>`;
+}
+connect();
+})();
+</script>
+</body>
+</html>

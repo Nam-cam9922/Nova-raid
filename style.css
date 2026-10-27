@@ -1,0 +1,21 @@
+:root{
+  --bg:#060a1f; --bg2:#0d1236; --ink:#eef1ff; --mute:#9aa3d6; --line:rgba(160,170,255,.18);
+  --gold:#ffc94a; --orange:#ff8a3d; --red:#ff4d5e; --teal:#3ee6c8; --purple:#8b5cff; --silver:#c9d1ea;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --disp: 'Orbitron', 'Be Vietnam Pro', system-ui, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 35%, #1a1650 0%, var(--bg) 60%) fixed, var(--bg);color:var(--ink);font-family:var(--font);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,select{font:inherit;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+select option{background:#111640}
+.disp{font-family:var(--disp);letter-spacing:.06em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:14px;font-weight:700;background:rgba(255,255,255,.08);border:1px solid var(--line);transition:transform .08s, background .2s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--orange),var(--red));border:0;box-shadow:0 6px 30px rgba(255,90,60,.35)}
+.btn.teal{background:linear-gradient(135deg,#1fb79f,#2f7bff);border:0}
+.btn.small{padding:7px 12px;border-radius:10px;font-size:13px}
+.muted{color:var(--mute)}
+canvas.sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hidden{display:none!important}
