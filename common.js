@@ -86,8 +86,8 @@
     return new Promise(res=>{
       const o=document.createElement('div');
       o.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(3,5,20,.8);display:flex;align-items:center;justify-content:center;padding:16px';
-      o.innerHTML='<div style="background:#111640;border:1px solid rgba(160,170,255,.3);border-radius:16px;padding:20px;max-width:420px;width:100%;color:#eef1ff;font-family:inherit"><div style="font-size:17px;font-weight:700;line-height:1.45;margin-bottom:16px"></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn" data-v="0">Huỷ</button><button class="btn primary" data-v="1"></button></div></div>';
-      o.querySelector('div>div').textContent=msg; o.querySelector('[data-v="1"]').textContent=okText||'OK';
+      o.innerHTML='<div style="background:#111640;border:1px solid rgba(160,170,255,.3);border-radius:16px;padding:20px;max-width:420px;width:100%;color:#eef1ff;font-family:inherit"><div class="nr-ask-msg" style="font-size:17px;font-weight:700;line-height:1.45;margin-bottom:16px"></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn" data-v="0">Huỷ</button><button class="btn primary" data-v="1"></button></div></div>';
+      o.querySelector('.nr-ask-msg').textContent=msg; o.querySelector('[data-v="1"]').textContent=okText||'OK';
       o.addEventListener('click',e=>{ const b=e.target.closest('[data-v]'); if(!b) return; o.remove(); res(b.dataset.v==='1'); });
       document.body.appendChild(o);
     });
