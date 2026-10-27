@@ -6,7 +6,7 @@
 <title>Nova Raid — Host</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 <style>
 body{overflow:hidden;height:100vh}
 #app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
@@ -217,17 +217,20 @@ body.final #app::after{content:'';position:fixed;inset:0;pointer-events:none;z-i
 
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/qrcode.js"></script>
-<script src="config.js?v=7"></script>
-<script src="common.js?v=7"></script>
-<script src="questions.js?v=7"></script>
-<script src="music.js?v=7"></script>
-<script src="sky.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="common.js?v=8"></script>
+<script src="questions.js?v=8"></script>
+<script src="music.js?v=8"></script>
+<script src="sky.js?v=8"></script>
 <script>
 (function(){
 const $ = s=>document.querySelector(s);
 const QS = window.NR_QUESTIONS;
 const QMAP = Object.fromEntries(QS.map(q=>[q.id,q]));
-const SET_CODE = 'namcam';
+const CODE_HASH = 'f04e4461f1d7dd177a7c124aadceb2d294bbb653788ae819f5d939ba9a8e5bdf'; // sha256('novaraid:'+code)
+const CFG_TOPIC = 'astroplanetia/novaraid/v1/config';
+async function sha(s){ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+const signCfg = c => sha(CODE_HASH+'|'+JSON.stringify(c));
 
 // ---------------- CONFIG ----------------
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -279,10 +282,11 @@ async function connect(){
   try{
     const r = await NR.connectAny(S.brokerIdx);
     client=r.client; S.brokerIdx=r.idx; save(); T=NR.topics(S.room);
-    client.subscribe(T.up,{qos:1});
-    client.on('message',(topic,buf)=>{ try{ onMsg(JSON.parse(buf.toString())); }catch(e){} });
+    client.subscribe(T.up,{qos:1}); client.subscribe(CFG_TOPIC,{qos:1});
+    client.on('message',(topic,buf)=>{ if(topic===CFG_TOPIC){ onCfgMsg(buf); return; } try{ onMsg(JSON.parse(buf.toString())); }catch(e){} });
     client.on('reconnect',()=>net(false)); client.on('offline',()=>net(false));
-    client.on('connect',()=>{ net(true); client.subscribe(T.up,{qos:1}); pushState(true); });
+    client.on('connect',()=>{ net(true); client.subscribe(T.up,{qos:1}); client.subscribe(CFG_TOPIC,{qos:1}); pushState(true); });
+    pullCfgOthers();
     net(true); renderQR(); pushState(true);
   }catch(e){ net(false); $('#netInfo').textContent='❌ Không kết nối được máy chủ. Kiểm tra wifi/4G của laptop rồi bấm F5.'; setTimeout(connect,5000); }
 }
@@ -708,25 +712,43 @@ function openSettings(){
     <div id="lockmsg" style="color:var(--red);font-size:13px;margin-top:8px;min-height:18px"></div><button class="btn small" id="lockx" style="margin-top:6px">Đóng</button></div>`;
     $('#code').focus();
     $('#lockx').onclick=()=>p.classList.add('hidden');
-    $('#lockf').onsubmit=e=>{ e.preventDefault(); if($('#code').value.trim().toLowerCase()===SET_CODE){ try{ sessionStorage.setItem('nr_unlock','1'); }catch(_){} openSettings.ok=true; openSettings(); } else { $('#lockmsg').textContent='Sai mã'; $('#code').value=''; } };
+    $('#lockf').onsubmit=async e=>{ e.preventDefault(); if(await sha('novaraid:'+$('#code').value.trim().toLowerCase())===CODE_HASH){ try{ sessionStorage.setItem('nr_unlock','1'); }catch(_){} openSettings.ok=true; openSettings(); } else { $('#lockmsg').textContent='Sai mã'; $('#code').value=''; } };
     return;
   }
   p.innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>⚙ Cài đặt Nova Raid</h3><button class="btn small" id="sx">✕</button></div>
-  <div class="hint">Lưu trên laptop này. Thưởng & tính năng áp dụng ngay; thời gian / % máu áp dụng từ trận sau.</div>
+  <div class="hint">☁ Cài đặt chung: lưu xong là <b>mọi máy host</b> mở game đều dùng cài đặt này. Thưởng & tính năng áp dụng ngay; thời gian / % máu áp dụng từ trận sau.${CFG._ts?'<br>Cập nhật lần cuối: '+new Date(CFG._ts).toLocaleString('vi-VN'):''}</div>
   ${FIELDS.map(([h,fs])=>`<h4>${h}</h4><div class="grid">${fs.map(([k,l,t])=>{ let v=getP(CFG,k);
     if(t==='b') return `<label class="f">${l}<input type="checkbox" data-k="${k}" data-t="b" ${v?'checked':''}></label>`;
     if(t==='min') v=Math.round(v/60); if(t==='pct') v=Math.round(v*100);
     return `<label class="f">${l}<input type="number" step="${t==='f'?'0.1':'1'}" min="0" data-k="${k}" data-t="${t}" value="${v}"></label>`; }).join('')}</div>`).join('')}
   <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><button class="btn primary" id="ss">💾 Lưu</button><button class="btn" id="sr">↺ Về mặc định</button></div></div>`;
   $('#sx').onclick=()=>p.classList.add('hidden');
-  $('#sr').onclick=async()=>{ if(await NR.ask('Đưa tất cả cài đặt về mặc định?','Về mặc định')){ CFG=clone(NR_DEFAULTS); saveCfg(); applyCfg(); openSettings(); toast('Đã về mặc định'); } };
+  $('#sr').onclick=async()=>{ if(await NR.ask('Đưa tất cả cài đặt về mặc định?','Về mặc định')){ CFG=clone(NR_DEFAULTS); await publishCfg(); applyCfg(); openSettings(); toast('☁ Đã về mặc định cho mọi máy'); } };
   $('#ss').onclick=()=>{
     p.querySelectorAll('[data-k]').forEach(i=>{ const t=i.dataset.t; let v;
       if(t==='b') v=i.checked; else { v=parseFloat(i.value); if(isNaN(v)) return; if(t==='min') v=Math.round(v*60); if(t==='pct') v=v/100; if(t==='n') v=Math.round(v); }
       setP(CFG,i.dataset.k,v); });
     CFG.timeLimit=Math.max(120,CFG.timeLimit); CFG.comboN=Math.max(2,CFG.comboN);
-    saveCfg(); applyCfg(); p.classList.add('hidden'); toast('✅ Đã lưu cài đặt');
+    publishCfg().then(n=>toast(n?'☁ Đã lưu — áp dụng cho MỌI máy host':'⚠ Đã lưu trên máy này, chưa đồng bộ được (mất mạng)')); applyCfg(); p.classList.add('hidden');
   };
+}
+async function publishCfg(){
+  CFG._ts=Date.now(); saveCfg();
+  const s=JSON.stringify({cfg:CFG, sig:await signCfg(CFG)}); let ok=0;
+  if(client&&client.connected){ client.publish(CFG_TOPIC,s,{qos:1,retain:true}); ok=1; }
+  if(!NR.qs('broker')) NR.BROKERS.forEach((u,i)=>{ if(i===S.brokerIdx) return; NR.connectOne(u,6000).then(c=>c.publish(CFG_TOPIC,s,{qos:1,retain:true},()=>setTimeout(()=>c.end(true),800))).catch(()=>{}); });
+  return ok;
+}
+async function onCfgMsg(buf){
+  const s=buf.toString(); if(!s) return; let m; try{ m=JSON.parse(s); }catch(e){ return; }
+  if(!m||!m.cfg||!m.sig||(await signCfg(m.cfg))!==m.sig) return;
+  if((m.cfg._ts||0)<=(CFG._ts||0)) return;
+  CFG=Object.assign(clone(NR_DEFAULTS), m.cfg); CFG.types=Object.assign(clone(NR_DEFAULTS.types), m.cfg.types||{});
+  saveCfg(); applyCfg(); toast('☁ Đã tải cài đặt chung');
+}
+function pullCfgOthers(){ // retained config may live on another broker too — take the newest
+  if(NR.qs('broker')) return;
+  NR.BROKERS.forEach((u,i)=>{ if(i===S.brokerIdx) return; NR.connectOne(u,6000).then(c=>{ c.on('message',(t,b)=>onCfgMsg(b)); c.subscribe(CFG_TOPIC,{qos:1}); setTimeout(()=>c.end(true),4000); }).catch(()=>{}); });
 }
 function applyCfg(){ POOL=pools(); if(S.status==='lobby'){ S.timeLimit=CFG.timeLimit; renderSettingsBar(); } setBossPhase(); updateHP(); renderChips(); music(); pushState(true); }
 
