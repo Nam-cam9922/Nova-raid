@@ -478,7 +478,7 @@ function showResults(){
   <div class="ann-t" style="font-size:8vh;color:${won?'#ffc94a':'#ff4d5e'}">${won?'SUPERNOVA DEFEATED!':'THE STAR ESCAPED…'}</div>
   <div class="ann-v">${won?'Cả lớp đã hạ gục boss! Mỗi đội +20 Stardust.':'Hết giờ, boss còn '+Math.round(S.hp/S.hpMax*100)+'% máu. Không có thưởng hạ boss.'}</div>
   <table><tr><th>#</th><th>Team</th><th>Damage</th><th>Top 3</th><th>Hạ boss</th><th>Phạt P3</th><th>Stardust</th></tr>
-  ${rw.map(r=>`<tr><td>${r.rank===1?'👑':r.rank}</td><td style="color:${r.color};font-weight:800">${esc(r.name)}</td><td>${r.dmg.toLocaleString('en')}</td><td>${r.rankReward?'+'+r.rankReward:'–'}</td><td>${r.win?'+'+r.win:'–'}</td><td>${r.pen?'−'+r.pen:'–'}</td><td class="total">${r.total>0?'+':''}${r.total}</td></tr>`).join('')}
+  ${rw.map(r=>`<tr><td>${r.rank===1?'👑':r.rank}</td><td style="color:${r.color};font-weight:800">${esc(r.name)}</td><td>${r.dmg.toLocaleString('en')}</td><td>${r.rankReward?'+'+r.rankReward:'–'}</td><td>${r.win?'+'+r.win:'–'}</td><td>${r.pen?'−'+r.pen:'–'}</td><td class="total">${r.total>0?'+':''}${String(r.total).replace('-','−')}</td></tr>`).join('')}
   </table><div class="note">BTC phát / thu Stardust theo cột cuối cùng. Chụp màn hình này để lưu kết quả.</div></div>`;
 }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

@@ -178,7 +178,7 @@ function renderEnd(){
   cur=null; stopTimer(); const won=st.status==='won';
   const rw=(st.rewards||[]).find(x=>x.id===myTeam);
   main.innerHTML=`<div class="center"><div style="font-size:60px">${won?'💥':'⌛'}</div><h1 style="color:${won?'var(--gold)':'var(--red)'}">${won?'SUPERNOVA DEFEATED!':'THE STAR ESCAPED'}</h1>
-  ${rw?`<div class="sub">Your team ranked <b>#${rw.rank}</b> with <b>${rw.dmg.toLocaleString('en')}</b> damage</div><div class="big-num">${rw.total>0?'+':''}${rw.total} ✦</div><div class="sub">Stardust (Top3 ${rw.rankReward?'+'+rw.rankReward:'0'} · Hạ boss ${rw.win?'+'+rw.win:'0'} · Phạt ${rw.pen?'−'+rw.pen:'0'})</div>`:''}
+  ${rw?`<div class="sub">Your team ranked <b>#${rw.rank}</b> with <b>${rw.dmg.toLocaleString('en')}</b> damage</div><div class="big-num">${rw.total>0?'+':''}${String(rw.total).replace('-','−')} ✦</div><div class="sub">Stardust (Top3 ${rw.rankReward?'+'+rw.rankReward:'0'} · Hạ boss ${rw.win?'+'+rw.win:'0'} · Phạt ${rw.pen?'−'+rw.pen:'0'})</div>`:''}
   <div class="sub" style="font-size:13px">Nhận Stardust từ BTC theo màn chiếu.</div></div>`;
 }
 connect();
