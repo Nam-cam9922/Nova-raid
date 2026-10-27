@@ -6,7 +6,7 @@
 <title>Nova Raid</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 <style>
 main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 16px;gap:18px}
 h1{font-family:var(--disp);font-weight:900;font-size:clamp(44px,10vw,110px);line-height:1;background:linear-gradient(90deg,var(--gold),var(--orange),var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -31,8 +31,8 @@ h1{font-family:var(--disp);font-weight:900;font-size:clamp(44px,10vw,110px);line
       <a class="btn teal" href="play.html">Nhập mã phòng</a></div>
   </div>
 </main>
-<script src="common.js"></script>
-<script src="sky.js"></script>
+<script src="common.js?v=3"></script>
+<script src="sky.js?v=3"></script>
 <script>
 const last = NR.store('nr_host_last'); const s = last && NR.store('nr_host_'+last);
 if(s && s.status!=='won' && s.status!=='lost'){ const r=document.getElementById('resume'); r.classList.remove('hidden'); r.href='host.html?room='+last; r.textContent='Mở lại phòng '+last; }

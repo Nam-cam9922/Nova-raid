@@ -6,7 +6,7 @@
 <title>Nova Raid — Host</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 <style>
 body{overflow:hidden;height:100vh}
 #app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
@@ -180,9 +180,9 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/qrcode.js"></script>
-<script src="common.js"></script>
-<script src="questions.js"></script>
-<script src="sky.js"></script>
+<script src="common.js?v=3"></script>
+<script src="questions.js?v=3"></script>
+<script src="sky.js?v=3"></script>
 <script>
 (function(){
 const $ = s=>document.querySelector(s);
@@ -350,10 +350,10 @@ function applyDamage(t, dmg){
 }
 
 // ---------------- FLOW ----------------
-function startBattle(){
+async function startBattle(){
   if(!netOk){ toast('Chưa kết nối máy chủ!'); return; }
   const joined = S.teams.filter(t=>t.cid).length;
-  if(joined < S.teams.length && !confirm(`Mới có ${joined}/${S.teams.length} đội vào phòng. Vẫn bắt đầu?`)) return;
+  if(joined < S.teams.length && !(await NR.ask(`Mới có ${joined}/${S.teams.length} đội vào phòng. Vẫn bắt đầu?`,'Bắt đầu'))) return;
   S.hpPerTeam = +$('#setDiff').value; S.timeLimit = +$('#setTime').value;
   S.hpMax = S.hpPerTeam * S.teams.length; S.hp = S.hpMax; S.phase=1; S.elapsed=0;
   S.teams.forEach(t=>{ t.dmg=0;t.hits=0;t.miss=0;t.pen=0;t.manual=0;t.cur=null; });
@@ -555,12 +555,12 @@ function renderAdmin(){
   <div class="muted" style="font-size:12px;margin-top:8px">Phím tắt: A = mở/đóng bảng này · Space = tạm dừng/tiếp tục · F = toàn màn hình</div>`;
 }
 let muted=false;
-$('#admin').addEventListener('click', e=>{
+$('#admin').addEventListener('click', async e=>{
   const b=e.target.closest('[data-a]'); if(!b) return; const a=b.dataset.a, t=b.dataset.t && team(b.dataset.t);
   if(a==='pause') pause(); if(a==='resume') resume();
   if(a==='skip'){ if(S.status==='paused') resume(true); const target = S.phase===1? 2/3 : 1/3; S.hp=Math.min(S.hp, Math.floor(S.hpMax*target)); updateHP(); goPhase(S.phase+1); }
-  if(a==='win' && confirm('Kết thúc trận: boss bị hạ (THẮNG)?')){ S.hp=0; updateHP(); endBattle('won'); }
-  if(a==='lose' && confirm('Kết thúc trận: hết giờ (THUA)?')) endBattle('lost');
+  if(a==='win' && await NR.ask('Kết thúc trận: boss bị hạ (THẮNG)?','Kết thúc')){ S.hp=0; updateHP(); endBattle('won'); }
+  if(a==='lose' && await NR.ask('Kết thúc trận: hết giờ (THUA)?','Kết thúc')) endBattle('lost');
   if(a==='time'){ S.timeLimit+=120; toast('+2 phút'); }
   if(a==='results') showResults();
   if(a==='sound'){ muted=!muted; Object.keys(NR.SFX).forEach(k=>{ if(!NR.SFX['_'+k]) NR.SFX['_'+k]=NR.SFX[k]; NR.SFX[k]= muted?()=>{}:NR.SFX['_'+k]; }); }
@@ -568,7 +568,7 @@ $('#admin').addEventListener('click', e=>{
   if(a==='pen' && t){ t.pen+=10; renderChips(); pushState(); }
   if(a==='unpen' && t){ t.pen=Math.max(0,t.pen-10); renderChips(); pushState(); }
   if(a==='copy'){ navigator.clipboard && navigator.clipboard.writeText(playUrl()); toast('Đã copy link'); }
-  if(a==='new' && confirm('Tạo phòng mới? Phòng hiện tại sẽ kết thúc.')){ send(T.all, '', true); location.href='host.html?new=1'; }
+  if(a==='new' && await NR.ask('Tạo phòng mới? Phòng hiện tại sẽ kết thúc.','Tạo phòng mới')){ send(T.all, '', true); NR.storeDel('nr_host_last'); setTimeout(()=>{ location.href='host.html?new=1'; }, 300); return; }
   save(); renderAdmin();
 });
 $('#gear').onclick=()=>{ $('#admin').classList.toggle('hidden'); renderAdmin(); };
