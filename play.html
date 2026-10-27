@@ -7,42 +7,72 @@
 <title>Nova Raid — Team</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=7">
 <style>
+html,body{touch-action:manipulation;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}
 body{min-height:100vh;min-height:100dvh}
-#app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+#app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 16px max(12px,env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .brand{font-family:var(--disp);font-weight:900;letter-spacing:.1em;font-size:18px}.brand span{color:var(--orange)}
-.tag{font-size:13px;font-weight:700;padding:6px 10px;border-radius:999px;border:1.5px solid var(--c,#fff);color:var(--c,#fff);display:flex;align-items:center;gap:6px;max-width:55%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tag{font-size:13px;font-weight:700;padding:6px 10px;border-radius:999px;border:1.5px solid var(--c,#fff);color:var(--c,#fff);display:flex;align-items:center;gap:6px;max-width:58%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .dot{width:8px;height:8px;border-radius:50%;background:#666;flex:none}.dot.on{background:var(--teal);box-shadow:0 0 6px var(--teal)}
+#ev{display:none;margin:0 0 10px;padding:10px 12px;border-radius:14px;border:2px solid var(--ec);color:var(--ec);background:rgba(5,8,30,.85);font-family:var(--disp);font-weight:900;font-size:15px;text-align:center;box-shadow:0 0 20px var(--ec)}
+#ev.show{display:block;animation:evIn .35s}
+#ev small{display:block;font-family:var(--font);font-weight:700;font-size:12px;color:var(--ink);margin-top:3px}
+#ev .prog{height:6px;border-radius:999px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}#ev .prog i{display:block;height:100%;background:var(--ec);transition:width .3s}
+@keyframes evIn{from{transform:scale(1.3);opacity:0}}
+body.final #app{box-shadow:inset 0 0 60px rgba(255,0,40,.55);animation:beat 1s infinite}
+@keyframes beat{0%,30%,100%{box-shadow:inset 0 0 40px rgba(255,0,40,.35)}15%,45%{box-shadow:inset 0 0 80px rgba(255,0,40,.8)}}
 main{flex:1;display:flex;flex-direction:column}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
-h1{font-family:var(--disp);font-weight:900;font-size:30px;line-height:1.1}
+h1{font-family:var(--disp);font-weight:900;font-size:28px;line-height:1.15}
 .sub{color:var(--mute);font-size:15px;line-height:1.5}
 .teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
-.tbtn{padding:16px 10px;border-radius:14px;border:2px solid var(--c);background:rgba(255,255,255,.04);font-weight:800;color:var(--c);font-size:16px;position:relative}
+.tbtn{padding:16px 10px;border-radius:14px;border:2px solid var(--c);background:rgba(255,255,255,.04);font-weight:800;color:var(--c);font-size:16px;position:relative;transition:transform .08s, background .15s;word-break:break-word}
 .tbtn small{display:block;font-weight:600;color:var(--mute);font-size:11px;margin-top:4px}
-.tbtn.taken{opacity:.5}
+.tbtn:active,.tbtn.press{transform:scale(.95);background:color-mix(in srgb,var(--c) 25%,transparent)}
+.tbtn.taken{opacity:.45}
 .codein{display:flex;gap:8px;width:100%}.codein input{flex:1;text-transform:uppercase;font-family:var(--disp);letter-spacing:.2em;font-size:22px;text-align:center}
-.phase{font-family:var(--disp);font-size:12px;font-weight:900;letter-spacing:.12em;padding:5px 10px;border-radius:999px;border:1.5px solid currentColor;align-self:flex-start}
-.bar{height:10px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:12px 0 4px;position:relative}
-.bar i{position:absolute;inset:0;transform-origin:left;background:linear-gradient(90deg,var(--teal),var(--gold))}
+.namein{width:100%;font-size:22px;font-weight:800;text-align:center;padding:14px;border-radius:14px;border:2px solid var(--c)}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.sug{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:14px;font-weight:600}
+.sug:active{transform:scale(.95);background:rgba(255,255,255,.15)}
+.btn{touch-action:manipulation}.btn:active{transform:scale(.96)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.phase{font-family:var(--disp);font-size:11px;font-weight:900;letter-spacing:.1em;padding:5px 10px;border-radius:999px;border:1.5px solid currentColor}
+.streak{font-family:var(--disp);font-weight:900;font-size:13px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--mute)}
+.streak.hot{background:linear-gradient(90deg,#ff6a00,#ffb000);color:#fff;box-shadow:0 0 16px #ff7a00;animation:hot .5s ease-in-out infinite alternate}
+@keyframes hot{to{box-shadow:0 0 28px #ffb000}}
+.bar{height:10px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:10px 0 4px;position:relative}
+.bar i{position:absolute;inset:0;transform-origin:left;background:linear-gradient(90deg,var(--teal),var(--gold));transition:transform .1s linear}
 .bar b{position:absolute;top:0;bottom:0;left:0;background:rgba(93,240,255,.35);border-right:2px solid #5df0ff}
 .tl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
-.prompt{font-size:22px;font-weight:800;line-height:1.35;margin:16px 0 14px}
+.prompt{font-size:21px;font-weight:800;line-height:1.35;margin:14px 0 12px}
 .kind{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em;margin-top:6px}
-.speak{align-self:center;width:96px;height:96px;border-radius:50%;font-size:40px;background:radial-gradient(circle,#2b3590,#141a52);border:2px solid var(--teal);box-shadow:0 0 30px rgba(62,230,200,.35);margin:4px 0 16px}
-.opts{display:grid;gap:10px;margin-top:auto}
-.opt{width:100%;text-align:left;padding:16px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:2px solid var(--line);font-size:18px;font-weight:700;display:flex;gap:12px;align-items:center;min-height:58px}
+.speak{align-self:center;width:92px;height:92px;border-radius:50%;font-size:38px;background:radial-gradient(circle,#2b3590,#141a52);border:2px solid var(--teal);box-shadow:0 0 30px rgba(62,230,200,.35);margin:2px 0 14px;touch-action:manipulation}
+.speak:active{transform:scale(.93)}
+.opts{display:grid;gap:10px;margin-top:auto;transition:filter .4s}
+.opts.dark{filter:blur(4.5px) brightness(.55)}
+.opt{width:100%;text-align:left;padding:16px;border-radius:14px;background:rgba(255,255,255,.06);border:2px solid var(--line);font-size:18px;font-weight:700;display:flex;gap:12px;align-items:center;min-height:58px;touch-action:manipulation;transition:transform .07s, background .12s, border-color .12s}
 .opt .l{font-family:var(--disp);width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.1);font-size:14px;flex:none}
-.opt.sel{border-color:var(--gold);background:rgba(255,201,74,.15)}
-.opt.right{border-color:var(--teal);background:rgba(62,230,200,.18)}
-.opt.wrong{border-color:var(--red);background:rgba(255,77,94,.15)}
-.opt:disabled{cursor:default}
-.res{font-family:var(--disp);font-weight:900;font-size:44px;line-height:1.1}
-.stats{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:13px;color:var(--mute)}
+.opt:active,.opt.press{transform:scale(.97);background:rgba(255,255,255,.14)}
+.opt.sel{border-color:var(--gold);background:rgba(255,201,74,.18);transform:scale(.98)}
+.opt.sel .l::after{content:''}
+.opt.right{border-color:var(--teal);background:rgba(62,230,200,.2)}
+.opt.wrong{border-color:var(--red);background:rgba(255,77,94,.17)}
+.opts.locked .opt:not(.sel):not(.right){opacity:.55}
+.firing{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--disp);font-weight:900;color:var(--gold);margin:12px 0;font-size:20px}
+.firing i{width:10px;height:10px;border-radius:50%;background:var(--gold);animation:dots .6s infinite alternate}.firing i:nth-child(2){animation-delay:.2s}.firing i:nth-child(3){animation-delay:.4s}
+@keyframes dots{to{opacity:.2;transform:scale(.6)}}
+.res{font-family:var(--disp);font-weight:900;font-size:42px;line-height:1.1;animation:resIn .3s cubic-bezier(.2,1.5,.4,1)}
+@keyframes resIn{from{transform:scale(1.6);opacity:0}}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tags span{font-family:var(--disp);font-weight:900;font-size:13px;padding:4px 10px;border-radius:999px}
+.t-CRIT{background:#fff36b;color:#1a1400}.t-OVERCHARGE{background:linear-gradient(90deg,#ff6a00,#ffb000);color:#fff}.t-METEOR{background:#ffb648;color:#2a1600}.t-FINAL{background:#ff4d5e;color:#fff}
+.stats{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:13px;color:var(--mute)}
 .stats b{color:var(--ink);font-family:var(--disp)}
-.mini{font-size:12px;color:var(--mute);text-decoration:underline;background:none;margin-top:6px}
+.mini{font-size:13px;color:var(--mute);text-decoration:underline;background:none;margin-top:6px;padding:8px}
 .big-num{font-family:var(--disp);font-weight:900;font-size:56px;color:var(--gold)}
 </style>
 </head>
@@ -53,133 +83,173 @@ h1{font-family:var(--disp);font-weight:900;font-size:30px;line-height:1.1}
     <div class="brand">NOVA <span>RAID</span></div>
     <div class="tag" id="tag"><span class="dot" id="dot"></span><span id="tagName">Connecting…</span></div>
   </header>
+  <div id="ev"></div>
   <main id="main"></main>
   <div class="stats hidden" id="stats"><span>Damage <b id="sDmg">0</b></span><span>Rank <b id="sRank">–</b></span><span>Penalty <b id="sPen">0</b> ✦</span></div>
 </div>
 <script src="vendor/mqtt.min.js"></script>
-<script src="common.js?v=5"></script>
-<script src="sky.js?v=5"></script>
+<script src="common.js?v=7"></script>
+<script src="sky.js?v=7"></script>
 <script>
 (function(){
 const $=s=>document.querySelector(s), main=$('#main');
-const room=(NR.qs('r')||'').toUpperCase(); const bidx=+(NR.qs('b')||0);
+const room=(NR.qs('r')||'').toUpperCase(), bidx=+(NR.qs('b')||0);
 const CID = NR.store('nr_cid') || (()=>{ const c=NR.rid(8); NR.store('nr_cid',c); return c; })();
 const KEY='nr_play_'+room;
-let client=null, T=null, st=null, myTeam=NR.store(KEY), cur=null, timerIv=null, answered=false, lastRes=null, ttsOk=('speechSynthesis' in window), ended=false;
+let client=null, T=null, st=null, myTeam=NR.store(KEY), cur=null, timerIv=null, answered=false, lastRes=null, ttsOk=('speechSynthesis' in window), screen='', naming=false, evEnd={};
+const SUG=['Star Hunters','Cosmic Cats','Galaxy Noodles','Moon Walkers','Nebula Ninjas','Rocket Rice','Black Hole Squad','Milky Way Tea','Alien Avengers','Comet Crew','Space Potatoes','Supernova Squad'];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const me=()=> st && myTeam && st.teams.find(x=>x.id===myTeam);
+function haptic(p){ try{ navigator.vibrate && navigator.vibrate(p); }catch(e){} }
+// instant press feedback on pointerdown (no 300ms wait)
+document.addEventListener('pointerdown',e=>{ const b=e.target.closest('.tbtn,.sug,.btn,.opt'); if(b){ b.classList.add('press'); haptic(8); } },{passive:true});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>document.addEventListener(ev,()=>document.querySelectorAll('.press').forEach(b=>b.classList.remove('press')),{passive:true}));
 
-function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function setTag(){
-  const t = st && myTeam && st.teams.find(x=>x.id===myTeam);
-  $('#tagName').textContent = t ? t.name : (client&&client.connected ? 'No team' : 'Connecting…');
-  document.documentElement.style.setProperty('--c', t ? t.color : '#fff');
-  $('#tag').style.setProperty('--c', t ? t.color : '#fff');
+  const t=me(); $('#tagName').textContent = t ? t.name : (client&&client.connected?'No team':'Connecting…');
+  const c=t?t.color:'#fff'; document.documentElement.style.setProperty('--c',c); $('#tag').style.setProperty('--c',c);
   if(t){ $('#stats').classList.remove('hidden'); $('#sDmg').textContent=t.dmg.toLocaleString('en'); $('#sRank').textContent='#'+t.rank; }
 }
-
-// ---------- no room code: ask for it ----------
 if(!room){
   main.innerHTML=`<div class="center"><h1>Join the Raid</h1><div class="sub">Nhập mã phòng trên màn chiếu</div>
-  <div class="codein"><input id="code" maxlength="6" placeholder="CODE" autocomplete="off"><button class="btn primary" id="go">GO</button></div></div>`;
-  $('#go').onclick=()=>{ const c=$('#code').value.trim().toUpperCase(); if(c) location.href='play.html?r='+c+'&b=0'; };
+  <form class="codein" id="cf"><input id="code" maxlength="6" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn primary">GO</button></form></div>`;
+  $('#cf').onsubmit=e=>{ e.preventDefault(); const c=$('#code').value.trim().toUpperCase(); if(c) location.href='play.html?r='+c+'&b=0'; };
   return;
 }
-
-// ---------- network ----------
 function connect(){
   main.innerHTML=`<div class="center"><h1>Connecting…</h1><div class="sub">Đang kết nối phòng <b>${esc(room)}</b></div></div>`;
-  client = mqtt.connect(NR.brokerUrl(bidx), { clientId:'nrp_'+NR.rid(10), keepalive:20, reconnectPeriod:2000, connectTimeout:8000, clean:true });
-  T = NR.topics(room);
-  client.on('connect', ()=>{ $('#dot').classList.add('on'); client.subscribe(T.all,{qos:1}); if(myTeam){ client.subscribe(T.team(myTeam),{qos:1}); hello(); } setTag(); if(!st) waitState(); });
-  client.on('offline', ()=>$('#dot').classList.remove('on'));
-  client.on('close', ()=>$('#dot').classList.remove('on'));
-  client.on('message', (topic, buf)=>{ const s=buf.toString(); if(!s) { if(topic===T.all){ st=null; roomGone(); } return; } let m; try{ m=JSON.parse(s);}catch(e){return;}
-    if(topic===T.all) onState(m); else onTeamMsg(m); });
+  client=mqtt.connect(NR.brokerUrl(bidx),{clientId:'nrp_'+NR.rid(10),keepalive:20,reconnectPeriod:1500,connectTimeout:8000,clean:true});
+  T=NR.topics(room);
+  client.on('connect',()=>{ $('#dot').classList.add('on'); client.subscribe(T.all,{qos:1}); if(myTeam){ client.subscribe(T.team(myTeam),{qos:1}); hello(); } setTag(); if(!st) waitState(); });
+  client.on('offline',()=>$('#dot').classList.remove('on')); client.on('close',()=>$('#dot').classList.remove('on'));
+  client.on('message',(topic,buf)=>{ const s=buf.toString(); if(!s){ if(topic===T.all){ st=null; roomGone(); } return; } let m; try{ m=JSON.parse(s);}catch(e){return;} if(topic===T.all) onState(m); else onTeamMsg(m); });
 }
-function waitState(){ setTimeout(()=>{ if(!st) main.innerHTML=`<div class="center"><h1>Room not found</h1><div class="sub">Không thấy phòng <b>${esc(room)}</b>. Kiểm tra lại mã QR trên màn chiếu, hoặc chờ host mở phòng.</div><button class="btn" onclick="location.reload()">Thử lại</button></div>`; }, 6000); }
-function roomGone(){ main.innerHTML=`<div class="center"><h1>Room closed</h1><div class="sub">Phòng này đã đóng. Quét mã QR mới trên màn chiếu.</div></div>`; }
-function send(obj){ if(client&&client.connected) client.publish(T.up, JSON.stringify(Object.assign({team:myTeam,cid:CID},obj)), {qos:1}); }
-function hello(){ send({type:'hello', tts:ttsOk}); }
-setInterval(()=>{ if(myTeam) send({type:'ping'}); }, 5000);
+function waitState(){ setTimeout(()=>{ if(!st) main.innerHTML=`<div class="center"><h1>Room not found</h1><div class="sub">Không thấy phòng <b>${esc(room)}</b>. Quét lại mã QR đang hiện trên màn chiếu.</div><button class="btn" onclick="location.reload()">Thử lại</button></div>`; },7000); }
+function roomGone(){ screen='gone'; main.innerHTML=`<div class="center"><h1>Room closed</h1><div class="sub">Phòng này đã đóng. Quét mã QR mới trên màn chiếu.</div></div>`; }
+function send(o){ if(client&&client.connected) client.publish(T.up, JSON.stringify(Object.assign({team:myTeam,cid:CID},o)),{qos:1}); }
+function hello(){ send({type:'hello',tts:ttsOk}); }
+setInterval(()=>{ if(myTeam) send({type:'ping'}); },5000);
 
 function onState(m){
-  const prev = st; st=m; setTag();
-  if(!myTeam){ renderPicker(); return; }
-  if(!st.teams.find(t=>t.id===myTeam)){ myTeam=null; NR.storeDel(KEY); renderPicker(); return; }
-  if(m.status==='lobby') renderWaiting();
-  else if(m.status==='announce' && (!prev || prev.status!=='announce' || prev.phase!==m.phase)) renderAnnounce();
-  else if(m.status==='paused') renderPaused();
-  else if(m.status==='won'||m.status==='lost') renderEnd();
-  else if(m.status==='battle' && (!prev || prev.status!=='battle') && !cur) main.innerHTML=`<div class="center"><h1>Ready…</h1><div class="sub">Next question incoming</div></div>`;
+  const prev=st; st=m; setTag(); renderEv(m.ev||{});
+  document.body.classList.toggle('final', !!(m.ev&&m.ev.final) && m.status==='battle');
+  if(!myTeam){ if(screen!=='picker'||teamsChanged(prev,m)) renderPicker(); return; }
+  const t=me(); if(!t){ myTeam=null; NR.storeDel(KEY); renderPicker(); return; }
+  if(m.status==='lobby'){ if(!t.named && !naming) renderName(); else if(!naming && (screen!=='wait'||!prev||prev.teams.find(x=>x.id===myTeam).name!==t.name)) renderWaiting(); }
+  else if(m.status==='announce' && (!prev||prev.status!=='announce'||prev.phase!==m.phase)) renderAnnounce();
+  else if(m.status==='paused' && screen!=='paused') renderPaused();
+  else if((m.status==='won'||m.status==='lost') && screen!=='end') renderEnd();
+  else if(m.status==='battle' && (!prev||prev.status!=='battle') && !cur) { screen='ready'; main.innerHTML=`<div class="center"><h1>Ready…</h1><div class="sub">Next question incoming</div></div>`; }
 }
+function teamsChanged(a,b){ return !a || JSON.stringify(a.teams.map(t=>[t.name,t.taken]))!==JSON.stringify(b.teams.map(t=>[t.name,t.taken])); }
 function onTeamMsg(m){
-  if(m.type==='kicked' && m.cid===CID){ /* another device holds team */ }
-  if(m.cid && m.cid!==CID && (m.type==='q')){ renderTaken(); return; }
-  if(m.type==='q'){ if(cur && cur.n===m.n) return; cur=m; answered=false; renderQ(); }
-  if(m.type==='res'){ if(!cur || m.n!==cur.n) return; lastRes=m; renderRes(m); }
+  if(m.cid && m.cid!==CID && m.type==='q'){ renderTaken(); return; }
+  if(m.type==='q'){ if(cur && cur.n===m.n) return; cur=m; answered=false; lastRes=null; renderQ(); }
+  if(m.type==='res'){ if(!cur||m.n!==cur.n) return; lastRes=m; renderRes(m); }
 }
+
+// ---------- events banner ----------
+function renderEv(e){
+  const b=$('#ev'); const n=Date.now();
+  ['meteor','blackout'].forEach(k=>{ if(e[k]) evEnd[k]=n+e[k]; else delete evEnd[k]; });
+  evEnd.heal = e.heal ? Object.assign({end:n+e.heal.ms}, e.heal) : null; evEnd.warn=e.warn; evEnd.final=e.final;
+  paintEv();
+}
+function paintEv(){
+  const b=$('#ev'), n=Date.now(); let c=null, h='';
+  if(evEnd.warn){ c='#ff4d5e'; h='⚠ BOSS SKILL INCOMING<small>Get ready…</small>'; }
+  else if(evEnd.heal && evEnd.heal.end>n){ c='#3cff96'; h=`💚 BOSS IS HEALING<small>Interrupt: ${evEnd.heal.got}/${evEnd.heal.need} hits · ${Math.ceil((evEnd.heal.end-n)/1000)}s — answer fast!</small><div class="prog"><i style="width:${evEnd.heal.got/evEnd.heal.need*100}%"></i></div>`; }
+  else if(evEnd.meteor>n){ c='#ffb648'; h=`☄ METEOR SHOWER x2<small>${Math.ceil((evEnd.meteor-n)/1000)}s left — attack now!</small>`; }
+  else if(evEnd.blackout>n){ c='#a88bff'; h=`🌑 BLACKOUT<small>${Math.ceil((evEnd.blackout-n)/1000)}s — read carefully!</small>`; }
+  else if(evEnd.final && st && st.status==='battle'){ c='#ff4d5e'; h='⏱ FINAL MINUTE<small>Damage boosted — everything you\'ve got!</small>'; }
+  if(c){ b.style.setProperty('--ec',c); if(!b.classList.contains('show')) haptic([60,40,60]); b.innerHTML=h; b.classList.add('show'); } else b.classList.remove('show');
+  const o=document.querySelector('.opts'); if(o) o.classList.toggle('dark', evEnd.blackout>n && !answered);
+}
+setInterval(paintEv, 500);
 
 // ---------- screens ----------
 function renderPicker(){
-  if(!st){ return; }
-  main.innerHTML=`<div class="center" style="justify-content:flex-start;padding-top:20px"><h1>Choose your team</h1><div class="sub">Chọn đúng đội của bạn · mỗi đội chỉ 1 điện thoại</div>
-  <div class="teams">${st.teams.map(t=>`<button class="tbtn ${t.taken?'taken':''}" style="--c:${t.color}" data-id="${t.id}">${esc(t.name)}${t.taken?'<small>đã có máy · bấm để thay</small>':''}</button>`).join('')}</div></div>`;
-  main.querySelectorAll('.tbtn').forEach(b=>b.onclick=async ()=>{
+  if(!st) return; screen='picker';
+  main.innerHTML=`<div class="center" style="justify-content:flex-start;padding-top:16px"><h1>Choose your team slot</h1><div class="sub">Chọn 1 ô trống · mỗi đội chỉ 1 điện thoại</div>
+  <div class="teams">${st.teams.map(t=>`<button class="tbtn ${t.taken?'taken':''}" style="--c:${t.color}" data-id="${t.id}">${t.named?esc(t.name):'Slot '+t.slot}${t.taken?'<small>đã có máy · bấm để thay</small>':'<small>'+(t.named?'':'trống')+'</small>'}</button>`).join('')}</div></div>`;
+  main.querySelectorAll('.tbtn').forEach(b=>b.onclick=async()=>{
     const t=st.teams.find(x=>x.id===b.dataset.id);
-    if(t.taken && !(await NR.ask(t.name+' đã có điện thoại khác. Chuyển sang máy này? (máy kia sẽ bị ngắt)','Chuyển'))) return;
-    NR.ac(); if(ttsOk){ try{ const u=new SpeechSynthesisUtterance(' '); speechSynthesis.speak(u);}catch(e){} }
-    myTeam=t.id; NR.store(KEY,myTeam); client.subscribe(T.team(myTeam),{qos:1}); hello(); setTag(); onState(st);
+    if(t.taken && !(await NR.ask((t.named?t.name:'Slot '+t.slot)+' đã có điện thoại khác. Chuyển sang máy này? (máy kia sẽ bị ngắt)','Chuyển'))) return;
+    NR.ac(); if(ttsOk){ try{ speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){} }
+    myTeam=t.id; NR.store(KEY,myTeam); client.subscribe(T.team(myTeam),{qos:1}); hello(); setTag(); screen=''; onState(st);
   });
+}
+function renderName(){
+  screen='name'; naming=true; const t=me();
+  const sugs=NR.shuffle(SUG).slice(0,6);
+  main.innerHTML=`<div class="center"><div style="font-size:52px">🪐</div><h1>Name your crew!</h1><div class="sub">Cả đội bàn nhanh rồi đặt tên (tối đa 16 ký tự)</div>
+  <form id="nf" style="width:100%;display:flex;flex-direction:column;gap:12px"><input class="namein" id="nm" maxlength="16" placeholder="Team name…" value="${t.named?esc(t.name):''}" autocomplete="off">
+  <button class="btn primary" style="padding:16px;font-size:18px">🚀 Launch!</button></form>
+  <div class="sub" style="font-size:13px">Hoặc chọn nhanh:</div><div class="sugs">${sugs.map(s=>`<button class="sug" type="button">${s}</button>`).join('')}</div></div>`;
+  main.querySelectorAll('.sug').forEach(b=>b.onclick=()=>{ $('#nm').value=b.textContent; });
+  $('#nf').onsubmit=e=>{ e.preventDefault(); const v=$('#nm').value.replace(/\s+/g,' ').trim().slice(0,16); if(!v){ $('#nm').focus(); return; }
+    send({type:'name',name:v}); naming=false; haptic(30); main.innerHTML=`<div class="center"><div class="firing"><i></i><i></i><i></i></div><div class="sub">Saving…</div></div>`; screen='saving';
+    setTimeout(()=>{ if(screen==='saving' && st) onState(st); },2500); };
 }
 function renderWaiting(){
-  const t=st.teams.find(x=>x.id===myTeam);
-  main.innerHTML=`<div class="center"><div style="font-size:64px">🚀</div><h1 style="color:${t.color}">${esc(t.name)}</h1><div class="sub">You're in! Waiting for the host to start the battle.<br>Đã vào phòng, chờ host bấm START.</div>
-  <div class="sub" style="font-size:13px;margin-top:20px">Tip: cả đội chụm lại quanh điện thoại này. Câu nghe (🔊) cần bật âm lượng to.</div>
-  <button class="mini" id="chg">Đổi đội</button></div>`;
+  screen='wait'; const t=me();
+  main.innerHTML=`<div class="center"><div style="font-size:64px">🚀</div><h1 style="color:${t.color}">${esc(t.name)}</h1><div class="sub">You're in! Waiting for the host to start.<br>Đã vào phòng, chờ host bấm START.</div>
+  <div class="sub" style="font-size:13px;margin-top:16px">Tip: cả đội chụm lại quanh điện thoại này. Bật âm lượng to cho câu nghe 🔊</div>
+  <button class="mini" id="rn">✎ Đổi tên đội</button><button class="mini" id="chg">Đổi ô đội</button></div>`;
+  $('#rn').onclick=()=>renderName();
   $('#chg').onclick=()=>{ myTeam=null; NR.storeDel(KEY); renderPicker(); setTag(); };
 }
-const PHN={1:['PHASE 1 · THE AWAKENING','#ffc94a','Answer correctly to fire your laser. Faster = more damage!'],2:['PHASE 2 · SOLAR SHIELD','#5df0ff','Only correct answers within 5 seconds break the shield!'],3:['PHASE 3 · SUPERNOVA RAGE','#ff4d5e','Wrong answers cost your team 10 Stardust!']};
-function renderAnnounce(){ cur=null; stopTimer(); const p=PHN[st.phase]; main.innerHTML=`<div class="center"><div class="phase" style="color:${p[1]};align-self:center">${p[0]}</div><h1 style="color:${p[1]}">Get ready!</h1><div class="sub">${p[2]}</div></div>`; if(navigator.vibrate) navigator.vibrate([200,100,200]); }
-function renderPaused(){ cur=null; stopTimer(); main.innerHTML=`<div class="center"><div style="font-size:56px">⏸</div><h1>Paused</h1><div class="sub">Host đang tạm dừng trận.</div></div>`; }
-function renderTaken(){ cur=null; stopTimer(); main.innerHTML=`<div class="center"><h1>Team moved</h1><div class="sub">Đội này đang được chơi trên điện thoại khác.</div><button class="btn" id="chg">Chọn lại đội</button></div>`; $('#chg').onclick=()=>{ myTeam=null; NR.storeDel(KEY); renderPicker(); setTag(); }; }
-function speak(text){ if(!ttsOk) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=.85;
-  const v=speechSynthesis.getVoices().find(v=>/^en(-|_)US/i.test(v.lang)) || speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const PHN={1:['PHASE 1 · THE AWAKENING','#ffc94a','Answer correctly to fire your laser. Faster = more damage!'],2:['PHASE 2 · SOLAR SHIELD','#5df0ff','Only fast correct answers break the shield!'],3:['PHASE 3 · SUPERNOVA RAGE','#ff4d5e','Wrong answers cost your team Stardust!']};
+function renderAnnounce(){ screen='ann'; cur=null; stopTimer(); const p=PHN[st.phase]; main.innerHTML=`<div class="center"><div class="phase" style="color:${p[1]}">${p[0]}</div><h1 style="color:${p[1]}">Get ready!</h1><div class="sub">${p[2]}</div></div>`; haptic([200,100,200]); }
+function renderPaused(){ screen='paused'; cur=null; stopTimer(); main.innerHTML=`<div class="center"><div style="font-size:56px">⏸</div><h1>Paused</h1><div class="sub">Host đang tạm dừng trận.</div></div>`; }
+function renderTaken(){ screen='taken'; cur=null; stopTimer(); main.innerHTML=`<div class="center"><h1>Team moved</h1><div class="sub">Đội này đang được chơi trên điện thoại khác.</div><button class="btn" id="chg">Chọn lại</button></div>`; $('#chg').onclick=()=>{ myTeam=null; NR.storeDel(KEY); renderPicker(); setTag(); }; }
+function speak(text){ if(!ttsOk) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=.85; const vs=speechSynthesis.getVoices(); const v=vs.find(v=>/^en(-|_)US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+function streakHtml(s){ const n=(st&&st.combo)||0; if(!n) return ''; const hot=s>=n; return `<span class="streak ${hot?'hot':''}">🔥 ${hot?'OVERCHARGE x'+s:s+'/'+n}</span>`; }
 function renderQ(){
-  stopTimer(); const m=cur, q=m.q, p=PHN[m.phase];
+  screen='q'; stopTimer(); const m=cur, q=m.q, p=PHN[m.phase];
   const kinds={spell:'Spelling',fill:'Fill in the blank',listen:'Listening',meaning:'Meaning',odd:'Odd one out'};
-  main.innerHTML=`<div class="phase" style="color:${p[1]}">${p[0]}</div>
-  <div class="bar">${m.shield?`<b style="width:${m.shield/m.limit*100}%"></b>`:''}<i id="tb"></i></div><div class="tl"><span>${m.shield?'🛡 5s to pierce the shield':'Faster = more damage'}</span><span id="tt"></span></div>
-  <div class="kind">${kinds[q.k]||''}</div>
-  <div class="prompt">${esc(q.p)}</div>
+  main.innerHTML=`<div class="topline"><span class="phase" style="color:${p[1]}">${p[0]}</span>${streakHtml(m.streak||0)}</div>
+  <div class="bar">${m.shield?`<b style="width:${m.shield/m.limit*100}%"></b>`:''}<i id="tb"></i></div><div class="tl"><span>${m.shield?`🛡 ${m.shield}s to pierce the shield`:'Faster = more damage'}</span><span id="tt"></span></div>
+  <div class="kind">${kinds[q.k]||''}</div><div class="prompt">${esc(q.p)}</div>
   ${q.k==='listen'?'<button class="speak" id="spk">🔊</button>':''}
+  <div id="slot"></div>
   <div class="opts">${q.o.map((o,i)=>`<button class="opt" data-v="${esc(o)}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>`;
   if(q.k==='listen'){ $('#spk').onclick=()=>speak(q.t); speak(q.t); }
-  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
-    if(answered) return; answered=true; b.classList.add('sel'); main.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+  const opts=main.querySelector('.opts');
+  const choose=b=>{
+    if(answered) return; answered=true; haptic(15); NR.SFX.tap();
+    b.classList.add('sel'); opts.classList.add('locked'); opts.classList.remove('dark');
+    $('#slot').innerHTML='<div class="firing"><i></i><i></i><i></i> FIRING</div>';
     send({type:'ans', n:m.n, qid:q.id, choice:b.dataset.v});
-    setTimeout(()=>{ if(cur===m && !lastResFor(m)) { answered=false; main.querySelectorAll('.opt').forEach(x=>{x.disabled=false;x.classList.remove('sel')}); } }, 4000);
-  });
-  const t0=performance.now() - (m.sinceSent||0)*1000*0; const total=m.left*1000; const start=performance.now();
-  timerIv=setInterval(()=>{ const el=performance.now()-start; const f=Math.max(0,1-el/total); const tb=$('#tb'); if(!tb) return stopTimer(); tb.style.transform=`scaleX(${f})`; $('#tt').textContent=Math.ceil(Math.max(0,total-el)/1000)+'s'; if(f<=0) stopTimer(); }, 100);
+    const mine=m; setTimeout(()=>{ if(cur===mine && !lastRes){ answered=false; opts.classList.remove('locked'); b.classList.remove('sel'); $('#slot').innerHTML='<div class="sub" style="text-align:center;color:var(--red)">Mạng chậm — bấm lại đáp án</div>'; } },5000);
+  };
+  // pointerdown = instant on touch; click as fallback (keyboard / some browsers)
+  // touch-action:manipulation removes the 300ms tap delay, so click fires instantly; pointerdown gives the visual press
+  opts.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(b)));
+  paintEv();
+  const total=m.left*1000, start=performance.now();
+  timerIv=setInterval(()=>{ const el=performance.now()-start, f=Math.max(0,1-el/total), tb=$('#tb'); if(!tb) return stopTimer(); tb.style.transform=`scaleX(${f})`; $('#tt').textContent=Math.ceil(Math.max(0,total-el)/1000)+'s'; if(f<=0) stopTimer(); },100);
 }
-function lastResFor(m){ return lastRes && lastRes.n===m.n; }
 function stopTimer(){ if(timerIv){ clearInterval(timerIv); timerIv=null; } }
 function renderRes(r){
-  stopTimer();
-  main.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===r.correct) b.classList.add('right'); else if(b.classList.contains('sel')) b.classList.add('wrong'); });
+  stopTimer(); const opts=main.querySelector('.opts');
+  if(opts){ opts.classList.add('locked'); opts.classList.remove('dark'); opts.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===r.correct) b.classList.add('right'); else if(b.classList.contains('sel')) b.classList.add('wrong'); }); }
   let html;
-  if(r.ok && r.dmg>0){ html=`<div class="res" style="color:var(--teal)">HIT! −${r.dmg}</div>`; if(navigator.vibrate) navigator.vibrate(60); NR.SFX.correct(); }
-  else if(r.ok && r.blocked){ html=`<div class="res" style="color:#5df0ff">🛡 BLOCKED</div><div class="sub">Correct, but too slow to pierce the shield (&gt;5s)</div>`; NR.SFX.block(); }
-  else { html=`<div class="res" style="color:var(--red)">${r.timeout?'TIME UP':'MISS'}${r.pen?` −${r.pen}✦`:''}</div><div class="sub">Answer: <b>${esc(r.correct)}</b></div>`; if(navigator.vibrate) navigator.vibrate([80,60,80]); NR.SFX.wrong(); }
-  const box=document.createElement('div'); box.className='center'; box.style.flex='0'; box.style.margin='14px 0'; box.innerHTML=html;
-  const opts=main.querySelector('.opts'); if(opts) opts.before(box); else main.appendChild(box);
+  const tags=(r.tags||[]).map(t=>`<span class="t-${t}">${t==='OVERCHARGE'?'🔥 OVERCHARGE':t==='CRIT'?'⚡ CRITICAL':t==='METEOR'?'☄ METEOR x2':'⏱ FINAL'}</span>`).join('');
+  if(r.ok && r.dmg>0){ html=`<div class="res" style="color:var(--teal)">HIT! −${r.dmg}</div>${tags?`<div class="tags">${tags}</div>`:''}`; haptic(r.tags&&r.tags.length?[40,30,80]:50); NR.SFX[r.tags&&r.tags.includes('CRIT')?'crit':'correct'](); }
+  else if(r.ok && r.blocked){ html=`<div class="res" style="color:#5df0ff">🛡 BLOCKED</div><div class="sub">Correct, but too slow to pierce the shield</div>`; NR.SFX.block(); }
+  else { html=`<div class="res" style="color:var(--red)">${r.timeout?'TIME UP':'MISS'}${r.pen?` −${r.pen}✦`:''}</div><div class="sub">Answer: <b>${esc(r.correct)}</b>${(cur&&cur.streak>=2)?' · combo lost 💔':''}</div>`; haptic([80,60,80]); NR.SFX.wrong(); }
+  const slot=$('#slot'); if(slot) slot.innerHTML=`<div class="center" style="flex:0;margin:6px 0 12px;gap:8px">${html}</div>`;
+  const top=main.querySelector('.topline'); if(top){ const s=top.querySelector('.streak'); const nh=streakHtml(r.streak||0); if(s) s.outerHTML=nh; else if(nh) top.insertAdjacentHTML('beforeend',nh); }
   $('#sDmg').textContent=r.total.toLocaleString('en'); $('#sPen').textContent=r.pent;
 }
 function renderEnd(){
-  cur=null; stopTimer(); const won=st.status==='won';
-  const rw=(st.rewards||[]).find(x=>x.id===myTeam);
+  screen='end'; cur=null; stopTimer(); const won=st.status==='won', rw=(st.rewards||[]).find(x=>x.id===myTeam);
   main.innerHTML=`<div class="center"><div style="font-size:60px">${won?'💥':'⌛'}</div><h1 style="color:${won?'var(--gold)':'var(--red)'}">${won?'SUPERNOVA DEFEATED!':'THE STAR ESCAPED'}</h1>
-  ${rw?`<div class="sub">Your team ranked <b>#${rw.rank}</b> with <b>${rw.dmg.toLocaleString('en')}</b> damage</div><div class="big-num">${rw.total>0?'+':''}${String(rw.total).replace('-','−')} ✦</div><div class="sub">Stardust (Top3 ${rw.rankReward?'+'+rw.rankReward:'0'} · Hạ boss ${rw.win?'+'+rw.win:'0'} · Phạt ${rw.pen?'−'+rw.pen:'0'})</div>`:''}
+  ${rw?`<div class="sub">Your team ranked <b>#${rw.rank}</b> · <b>${rw.dmg.toLocaleString('en')}</b> damage · best combo 🔥${rw.best}</div><div class="big-num">${rw.total>0?'+':''}${String(rw.total).replace('-','−')} ✦</div>
+  <div class="sub">Top3 ${rw.rankReward?'+'+rw.rankReward:'0'} · Hạ boss ${rw.win?'+'+rw.win:'0'}${rw.lastHit?' · ⚔ Last hit +'+rw.lastHit:''} · Phạt ${rw.pen?'−'+rw.pen:'0'}</div>`:''}
   <div class="sub" style="font-size:13px">Nhận Stardust từ BTC theo màn chiếu.</div></div>`;
+  if(rw && rw.lastHit) haptic([100,50,100,50,200]);
 }
 connect();
 })();

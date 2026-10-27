@@ -77,7 +77,18 @@
     alarm(){ for(let i=0;i<4;i++){ tone('sawtooth', 440, 880, 0.3, 0.07, i*0.35); } },
     boom(){ noise(2.5, 0.6); tone('sine', 90, 30, 2.2, 0.35); },
     counter(){ tone('sawtooth', 300, 60, 0.5, 0.1); noise(0.4,0.2); },
-    tick(){ tone('sine', 1200, 0, 0.04, 0.06); }
+    tick(){ tone('sine', 1200, 0, 0.04, 0.06); },
+    tap(){ tone('sine', 880, 0, 0.05, 0.06); },
+    crit(){ tone('square', 1800, 600, 0.12, 0.07); tone('sawtooth', 2400, 300, 0.2, 0.06, 0.05); noise(0.2,0.3); },
+    overcharge(){ for(let i=0;i<5;i++) tone('sawtooth', 300+i*180, 0, 0.08, 0.06, i*0.05); },
+    warn(){ for(let i=0;i<3;i++){ tone('square', 760, 0, 0.18, 0.08, i*0.3); tone('square', 570, 0, 0.12, 0.08, i*0.3+0.18); } },
+    meteor(){ noise(1.2, 0.35); tone('sawtooth', 900, 60, 1.1, 0.06); },
+    heal(){ for(let i=0;i<6;i++) tone('sine', 400+i*90, 0, 0.18, 0.08, i*0.09); },
+    healStop(){ tone('square', 600, 120, 0.4, 0.1); noise(0.3,0.25); },
+    blackout(){ tone('sine', 220, 40, 1.4, 0.2); },
+    heartbeat(){ tone('sine', 70, 40, 0.12, 0.5); tone('sine', 62, 35, 0.12, 0.4, 0.2); },
+    fanfare(){ [523,659,784,1047].forEach((f,i)=>tone('triangle', f, 0, 0.35, 0.12, i*0.12)); },
+    mvp(){ tone('triangle', 784, 0, 0.12, 0.1); tone('triangle', 1175, 0, 0.25, 0.1, 0.1); }
   };
 
 

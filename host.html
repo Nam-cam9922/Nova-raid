@@ -6,35 +6,37 @@
 <title>Nova Raid — Host</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=7">
 <style>
 body{overflow:hidden;height:100vh}
 #app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
 canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
 
-/* ---------- LOBBY ---------- */
+/* LOBBY */
 #lobby{flex:1;display:grid;grid-template-columns:minmax(300px,38vh) 1fr;gap:5vh;padding:5vh 6vw;align-items:center}
 .qrbox{background:#fff;border-radius:22px;padding:2.2vh;aspect-ratio:1;display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(255,180,80,.35)}
-.qrbox img,.qrbox svg{width:100%;height:100%;image-rendering:pixelated}
+.qrbox svg{width:100%;height:100%}
 .code{margin-top:2vh;text-align:center}
 .code .big{font-family:var(--disp);font-size:6vh;font-weight:900;letter-spacing:.25em;color:var(--gold)}
 .lob-title{font-family:var(--disp);font-weight:900;font-size:8vh;line-height:1;background:linear-gradient(90deg,var(--gold),var(--orange),var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}
 .lob-sub{font-size:2.6vh;color:var(--mute);margin:1vh 0 3vh}
 .steps{font-size:2.3vh;line-height:1.7;margin-bottom:3vh}
 .steps b{color:var(--teal)}
-.teamgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:3vh}
-.tcard{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04)}
+.teamgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:3vh}
+.tcard{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);transition:border-color .2s, background .2s}
 .tcard .dot{width:14px;height:14px;border-radius:50%;flex:none}
 .tcard input{flex:1;min-width:0;padding:4px 6px;font-weight:700;background:transparent;border-color:transparent}
 .tcard input:focus{border-color:var(--line)}
 .tcard .st{font-size:12px;color:var(--mute);white-space:nowrap}
 .tcard.on{border-color:rgba(62,230,200,.6);background:rgba(62,230,200,.08)}
 .tcard.on .st{color:var(--teal)}
+.tcard.pop{animation:pop .5s}
+@keyframes pop{30%{transform:scale(1.06)}}
 .settings{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:3vh;font-size:15px}
 .settings label{display:flex;align-items:center;gap:8px;color:var(--mute)}
 .net{font-size:13px;color:var(--mute);margin-top:1vh}
 
-/* ---------- BATTLE ---------- */
+/* BATTLE */
 #battle{flex:1;display:flex;flex-direction:column}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:2vh 3vw 0}
 .brand{font-family:var(--disp);font-weight:900;font-size:3.2vh;letter-spacing:.12em}
@@ -49,6 +51,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 .hpfill{position:absolute;inset:0;transform-origin:left;background:linear-gradient(90deg,#ff3b4f,#ff8a3d,#ffd34a);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .hpghost{position:absolute;inset:0;transform-origin:left;background:rgba(255,255,255,.55);transition:transform 1.2s .3s ease}
 .hpmark{position:absolute;top:0;bottom:0;width:3px;background:rgba(0,0,0,.6)}
+.hpbar.healing .hpfill{background:linear-gradient(90deg,#1fd18b,#7dffb2);}
 .arena{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
 #boss{position:relative;width:42vh;height:42vh;transition:filter .3s}
 #boss .rays{position:absolute;inset:-28%;border-radius:50%;background:repeating-conic-gradient(from 0deg, rgba(255,200,80,.55) 0deg 6deg, transparent 6deg 18deg);-webkit-mask:radial-gradient(circle, transparent 34%, #000 36%, transparent 70%);mask:radial-gradient(circle, transparent 34%, #000 36%, transparent 70%);animation:spin 18s linear infinite}
@@ -63,11 +66,13 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
   linear-gradient(115deg, transparent 47%, rgba(255,255,255,.9) 48%, transparent 50%) 10% 20%/50% 50% no-repeat,
   linear-gradient(35deg, transparent 47%, rgba(255,255,255,.85) 48%, transparent 50%) 70% 70%/45% 45% no-repeat,
   linear-gradient(160deg, transparent 47%, rgba(255,255,255,.8) 48%, transparent 50%) 80% 15%/40% 40% no-repeat}
+#boss .healglow{position:absolute;inset:-8%;border-radius:50%;box-shadow:0 0 80px 30px rgba(60,255,150,.7), inset 0 0 60px rgba(60,255,150,.6);opacity:0;transition:opacity .4s}
 #boss.p2 .shield{opacity:1;transform:scale(1);animation:shieldPulse 1.6s ease-in-out infinite}
 #boss.p3 .core{background:radial-gradient(circle at 40% 38%, #fff 0%, #ffd0a0 18%, #ff5a2a 50%, #d0101e 78%, #4a0008 100%);animation:pulse .9s ease-in-out infinite;box-shadow:0 0 90px 30px rgba(255,40,40,.6), 0 0 240px 90px rgba(255,20,20,.3)}
 #boss.p3 .rays{background:repeating-conic-gradient(from 0deg, rgba(255,60,60,.7) 0deg 5deg, transparent 5deg 14deg);animation-duration:5s}
 #boss.p3 .brow{opacity:1}
 #boss.p3 .cracks{opacity:1}
+#boss.heal .healglow{opacity:1;animation:pulse .6s ease-in-out infinite}
 #boss.hit{animation:shake .25s}
 #boss.dead{animation:supernova 1.6s forwards}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -76,13 +81,19 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 @keyframes shieldPulse{50%{box-shadow:0 0 70px rgba(90,240,255,.9), inset 0 0 60px rgba(90,240,255,.7)}}
 @keyframes shake{20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-6px)}60%{transform:translate(-6px,6px)}80%{transform:translate(5px,-3px)}}
 @keyframes supernova{0%{transform:scale(1);filter:brightness(1)}40%{transform:scale(.7);filter:brightness(3)}100%{transform:scale(6);filter:brightness(8);opacity:0}}
+.bubble{position:absolute;left:calc(50% + 24vh);top:16%;max-width:26vw;background:#fff;color:#1a0b0b;font-weight:800;font-size:2.4vh;padding:1.4vh 1.6vw;border-radius:18px 18px 18px 4px;box-shadow:0 10px 40px rgba(0,0,0,.5);opacity:0;transform:scale(.6);transform-origin:left bottom;transition:all .3s cubic-bezier(.2,1.4,.4,1);z-index:6}
+.bubble.show{opacity:1;transform:scale(1)}
 .teams{display:flex;justify-content:center;gap:1.2vw;padding:0 2vw 2.5vh;flex-wrap:wrap}
 .chip{position:relative;min-width:12vw;padding:1.1vh 1.2vw;border-radius:16px;background:rgba(10,14,45,.75);border:2px solid var(--c);box-shadow:0 0 18px color-mix(in srgb, var(--c) 35%, transparent);text-align:center;transition:transform .2s}
-.chip .nm{font-weight:800;font-size:2.2vh;color:var(--c)}
+.chip .nm{font-weight:800;font-size:2.2vh;color:var(--c);max-width:16vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chip .dm{font-family:var(--disp);font-weight:800;font-size:3vh}
 .chip .sd{font-size:1.6vh;color:var(--mute)}
 .chip .cn{position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:#555}
 .chip .cn.on{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.chip .stk{position:absolute;top:-1.4vh;right:-1vh;font-size:1.6vh;font-weight:900;background:#ff6a00;color:#fff;border-radius:999px;padding:.2vh .8vh;opacity:0}
+.chip.oc{border-color:#ff8a00;box-shadow:0 0 30px #ff7a00, 0 0 60px rgba(255,90,0,.6);animation:fire .5s ease-in-out infinite alternate}
+.chip.oc .stk{opacity:1}
+@keyframes fire{to{box-shadow:0 0 45px #ffb000, 0 0 90px rgba(255,60,0,.7);transform:translateY(-3px)}}
 .chip.top::before{content:'👑';position:absolute;top:-2.6vh;left:50%;transform:translateX(-50%);font-size:2.6vh}
 .chip.hurt{animation:shake .3s}
 .feed{position:absolute;left:2.5vw;top:2vh;width:22vw;display:flex;flex-direction:column;gap:6px;font-size:1.8vh}
@@ -90,31 +101,55 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 @keyframes fin{from{opacity:0;transform:translateX(-20px)}}
 .legend{position:absolute;right:2.5vw;top:2vh;width:22vw;font-size:1.8vh;color:var(--mute);background:rgba(10,14,45,.55);border:1px solid var(--line);border-radius:12px;padding:12px 14px;line-height:1.5}
 .legend b{color:var(--ink)}
+/* event banner */
+#evbar{position:fixed;left:50%;top:19vh;transform:translateX(-50%);z-index:9;min-width:40vw;text-align:center;font-family:var(--disp);font-weight:900;font-size:3vh;padding:1.2vh 2vw;border-radius:16px;border:2px solid var(--ec,#fff);color:var(--ec,#fff);background:rgba(5,8,30,.85);box-shadow:0 0 40px var(--ec,#fff);display:none}
+#evbar.show{display:block;animation:zoomIn .4s}
+#evbar small{display:block;font-family:var(--font);font-size:1.8vh;font-weight:700;color:var(--ink);margin-top:.4vh}
+#evbar .prog{height:1vh;border-radius:999px;background:rgba(255,255,255,.15);margin-top:.8vh;overflow:hidden}
+#evbar .prog i{display:block;height:100%;background:var(--ec);transition:width .3s}
+@keyframes zoomIn{from{transform:translateX(-50%) scale(1.6);opacity:0}}
+body.blackout #battle::after{content:'';position:fixed;inset:0;background:radial-gradient(circle at 50% 50%, transparent 20%, rgba(0,0,0,.85) 70%);pointer-events:none;z-index:4;animation:flick 2s infinite}
+@keyframes flick{50%{opacity:.75}}
+body.final #app::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:4;box-shadow:inset 0 0 12vh rgba(255,0,30,.75);animation:beat 1s infinite}
+@keyframes beat{0%,30%,100%{opacity:.4}15%,45%{opacity:1}}
+#bigcount{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:8;pointer-events:none;font-family:var(--disp);font-weight:900;font-size:40vh;color:rgba(255,60,80,.85);text-shadow:0 0 60px rgba(255,0,40,.9);opacity:0}
+#bigcount.go{animation:bc 1s}
+@keyframes bc{0%{opacity:0;transform:scale(2)}20%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.8)}}
+#mvp{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:8;pointer-events:none;font-family:var(--disp);font-weight:900;font-size:6vh;color:var(--gold);text-shadow:0 0 30px rgba(255,200,60,.9);white-space:nowrap;opacity:0}
+#mvp.go{animation:mvpIn 2.4s}
+@keyframes mvpIn{0%{opacity:0;transform:translateX(-50%) scale(2.2)}12%{opacity:1;transform:translateX(-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
 
-/* ---------- OVERLAYS ---------- */
+/* OVERLAYS */
 .overlay{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(3,5,20,.78);backdrop-filter:blur(4px)}
 .ann-k{font-family:var(--disp);font-size:3vh;letter-spacing:.4em;color:var(--mute)}
 .ann-t{font-family:var(--disp);font-weight:900;font-size:10vh;line-height:1.05;margin:1.5vh 0;animation:zoom .6s cubic-bezier(.2,1.4,.4,1)}
 .ann-d{font-size:3.4vh;max-width:70vw;font-weight:700}
 .ann-v{font-size:2.6vh;max-width:70vw;color:var(--mute);margin-top:1.2vh}
 @keyframes zoom{from{transform:scale(2.5);opacity:0}}
-.res{width:min(900px,90vw)}
-.res table{width:100%;border-collapse:collapse;font-size:2.6vh;margin-top:3vh}
-.res th{font-size:1.8vh;color:var(--mute);font-weight:600;text-align:right;padding:6px 12px}
+.res{width:min(1000px,92vw)}
+.res table{width:100%;border-collapse:collapse;font-size:2.4vh;margin-top:3vh}
+.res th{font-size:1.7vh;color:var(--mute);font-weight:600;text-align:right;padding:6px 10px}
 .res th:first-child,.res th:nth-child(2){text-align:left}
-.res td{padding:1.2vh 12px;border-top:1px solid var(--line);text-align:right;font-family:var(--disp);font-weight:700}
+.res td{padding:1.1vh 10px;border-top:1px solid var(--line);text-align:right;font-family:var(--disp);font-weight:700}
 .res td:first-child,.res td:nth-child(2){text-align:left;font-family:var(--font)}
-.res td.total{color:var(--gold);font-size:3.2vh}
+.res td.total{color:var(--gold);font-size:3vh}
 .res .note{font-size:1.9vh;color:var(--mute);margin-top:2vh}
 
-/* ---------- ADMIN ---------- */
+/* ADMIN + SETTINGS */
 #gear{position:fixed;left:14px;bottom:14px;z-index:30;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:20px}
-#admin{position:fixed;left:14px;bottom:66px;z-index:30;width:360px;max-height:80vh;overflow:auto;background:#0e1440;border:1px solid var(--line);border-radius:16px;padding:14px;font-size:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-#admin h4{font-size:13px;color:var(--mute);margin:10px 0 6px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+#admin{position:fixed;left:14px;bottom:66px;z-index:30;width:380px;max-height:80vh;overflow:auto;background:#0e1440;border:1px solid var(--line);border-radius:16px;padding:14px;font-size:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#admin h4,#setp h4{font-size:12px;color:var(--mute);margin:12px 0 6px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 #admin .row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;align-items:center}
 #admin .trow{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-#admin .trow span{flex:1;font-weight:700}
-#toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:40;background:#1b2160;border:1px solid var(--line);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+#admin .trow span{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#setp{position:fixed;inset:0;z-index:50;background:rgba(3,5,20,.85);display:flex;align-items:center;justify-content:center;padding:20px}
+#setp .card{background:#0e1440;border:1px solid var(--line);border-radius:18px;width:min(860px,96vw);max-height:92vh;overflow:auto;padding:22px 24px}
+#setp .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 20px}
+#setp label.f{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;border-bottom:1px solid rgba(160,170,255,.08)}
+#setp label.f input[type=number]{width:84px;text-align:right}
+#setp label.f input[type=checkbox]{width:20px;height:20px;accent-color:var(--orange)}
+#setp .hint{font-size:12px;color:var(--mute);margin-top:2px}
+#toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:60;background:#1b2160;border:1px solid var(--line);padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none}
 #toast.show{opacity:1}
 </style>
 </head>
@@ -122,57 +157,59 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 <canvas class="sky" id="sky"></canvas>
 <canvas id="fx"></canvas>
 <div id="app">
-
-  <!-- LOBBY -->
   <section id="lobby" class="hidden">
     <div>
       <div class="qrbox" id="qr"></div>
-      <div class="code"><div class="muted">ROOM CODE</div><div class="big" id="roomCode">------</div></div>
+      <div class="code"><div class="muted">ROOM CODE</div><div class="big" id="roomCode">-----</div></div>
     </div>
     <div>
       <div class="lob-title">NOVA RAID</div>
       <div class="lob-sub">Đánh Boss Siêu Tân Tinh · Astro Planetia · Chapter 3</div>
       <div class="steps">
-        1. Mỗi đội dùng <b>1 điện thoại</b> quét mã QR (hoặc vào link bên dưới, nhập mã phòng).<br>
-        2. Chọn đúng <b>tên đội</b> của mình → ô đội sẽ sáng lên ở đây.<br>
+        1. Mỗi đội dùng <b>1 điện thoại</b> quét mã QR → chọn 1 ô đội trống.<br>
+        2. <b>Tự đặt tên đội</b> trên điện thoại → tên hiện lên ở đây.<br>
         3. Đủ đội thì host bấm <b>START BATTLE</b>.
       </div>
       <div class="settings">
         <label>Số đội <select id="setTeams"></select></label>
-        <label>Boss chết lúc <select id="setDiff"><option value="0.8">~80% thời gian</option><option value="0.9" selected>~90% thời gian</option><option value="1.02">sát giờ (khó)</option></select></label>
-        <label>Thời gian đánh <select id="setTime"><option value="900">15 phút</option><option value="1080">18 phút</option><option value="1200" selected>20 phút</option><option value="1320">22 phút</option><option value="1500">25 phút</option></select></label>
+        <label>Thời gian đánh <select id="setTime"><option value="900">15 phút</option><option value="1080">18 phút</option><option value="1200">20 phút</option><option value="1320">22 phút</option><option value="1500">25 phút</option></select></label>
       </div>
       <div class="teamgrid" id="teamGrid"></div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn primary disp" id="btnStart" style="font-size:20px;padding:16px 34px">START BATTLE ▶</button>
         <button class="btn" id="btnRules">Xem luật chơi</button>
+        <button class="btn" id="btnSet">🔒 Cài đặt</button>
       </div>
       <div class="net" id="netInfo">Đang kết nối máy chủ…</div>
     </div>
   </section>
 
-  <!-- BATTLE -->
   <section id="battle" class="hidden">
     <div class="topbar">
       <div class="brand">NOVA <span>RAID</span></div>
       <div class="phase" id="phaseBadge">PHASE 1</div>
-      <div class="timer" id="timer">12:00</div>
+      <div class="timer" id="timer">20:00</div>
     </div>
     <div class="hpwrap">
       <div class="hplabel"><span>☀ SUPERNOVA BOSS</span><span id="hpText">0 / 0</span></div>
-      <div class="hpbar"><div class="hpghost" id="hpGhost"></div><div class="hpfill" id="hpFill"></div><div class="hpmark" style="left:33.33%"></div><div class="hpmark" style="left:66.66%"></div></div>
+      <div class="hpbar" id="hpbar"><div class="hpghost" id="hpGhost"></div><div class="hpfill" id="hpFill"></div><div class="hpmark" id="mk2"></div><div class="hpmark" id="mk3"></div></div>
     </div>
     <div class="arena">
       <div class="feed" id="feed"></div>
       <div class="legend" id="legend"></div>
-      <div id="boss"><div class="rays"></div><div class="shield"></div><div class="core"></div><div class="cracks"></div><div class="brow"></div><div class="eye"></div></div>
+      <div id="boss"><div class="rays"></div><div class="healglow"></div><div class="shield"></div><div class="core"></div><div class="cracks"></div><div class="brow"></div><div class="eye"></div></div>
+      <div class="bubble" id="bubble"></div>
     </div>
     <div class="teams" id="chips"></div>
   </section>
 </div>
 
+<div id="evbar"></div>
+<div id="bigcount"></div>
+<div id="mvp"></div>
 <div class="overlay hidden" id="ann"></div>
 <div class="overlay hidden" id="results"></div>
+<div id="setp" class="hidden"></div>
 
 <button id="gear" title="Bảng điều khiển (phím A)">⚙</button>
 <div id="admin" class="hidden"></div>
@@ -180,456 +217,561 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events
 
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/qrcode.js"></script>
-<script src="common.js?v=5"></script>
-<script src="questions.js?v=5"></script>
-<script src="sky.js?v=5"></script>
+<script src="config.js?v=7"></script>
+<script src="common.js?v=7"></script>
+<script src="questions.js?v=7"></script>
+<script src="music.js?v=7"></script>
+<script src="sky.js?v=7"></script>
 <script>
 (function(){
 const $ = s=>document.querySelector(s);
 const QS = window.NR_QUESTIONS;
 const QMAP = Object.fromEntries(QS.map(q=>[q.id,q]));
-const FAST = QS.filter(q=>q.fast).map(q=>q.id);
-const ALL  = QS.map(q=>q.id);
+const SET_CODE = 'namcam';
 
-const PH = {
-  1:{name:'PHASE 1', title:'THE AWAKENING', color:'#ffc94a', limit:25, en:'Answer correctly to fire your laser. Faster answers deal more damage!', vi:'Trả lời đúng để bắn laser. Trả lời càng nhanh, sát thương càng cao!'},
-  2:{name:'PHASE 2', title:'SOLAR SHIELD', color:'#5df0ff', limit:15, shield:5, en:'The boss raised its shield! Only correct answers within 5 SECONDS deal damage.', vi:'Boss bật khiên! Chỉ câu trả lời đúng trong 5 GIÂY mới gây sát thương.'},
-  3:{name:'PHASE 3', title:'SUPERNOVA RAGE', color:'#ff4d5e', limit:20, en:'The boss strikes back! Every WRONG answer costs your team 10 Stardust.', vi:'Boss phản đòn! Mỗi câu SAI, đội bị trừ 10 Stardust.'}
-};
-const REWARD = {ranks:[50,30,20], win:20, penalty:10};
+// ---------------- CONFIG ----------------
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+let CFG = Object.assign(clone(NR_DEFAULTS), NR.store('nr_cfg')||{});
+CFG.types = Object.assign(clone(NR_DEFAULTS.types), CFG.types||{});
+function saveCfg(){ NR.store('nr_cfg', CFG); }
+
+function PH(p){
+  return ({
+    1:{name:'PHASE 1', title:'THE AWAKENING', color:'#ffc94a', limit:CFG.qLimit[0], en:'Answer correctly to fire your laser. Faster answers deal more damage!', vi:'Trả lời đúng để bắn laser. Càng nhanh, sát thương càng cao!'},
+    2:{name:'PHASE 2', title:'SOLAR SHIELD', color:'#5df0ff', limit:CFG.qLimit[1], shield:CFG.shieldSec, en:`The boss raised its shield! Only correct answers within ${CFG.shieldSec} SECONDS deal damage.`, vi:`Boss bật khiên! Chỉ câu đúng trong ${CFG.shieldSec} GIÂY mới gây sát thương.`},
+    3:{name:'PHASE 3', title:'SUPERNOVA RAGE', color:'#ff4d5e', limit:CFG.qLimit[2], en:`The boss strikes back! Every WRONG answer costs your team ${CFG.penalty} Stardust.`, vi:`Boss phản đòn! Mỗi câu SAI, đội bị trừ ${CFG.penalty} Stardust.`}
+  })[p];
+}
+function pools(){
+  const ok = q => CFG.types[q.k] !== false;
+  let all = QS.filter(ok); if(!all.length) all = QS;
+  let fast = all.filter(q=>q.fast); if(fast.length<10) fast = QS.filter(q=>q.fast);
+  return { all: all.map(q=>q.id), fast: fast.map(q=>q.id) };
+}
 
 // ---------------- STATE ----------------
-let S = null;        // persisted game state
-let client = null, T = null;
+let S=null, client=null, T=null;
 const KEY = r=>'nr_host_'+r;
-
-function newState(room, brokerIdx){
-  return { room, brokerIdx, status:'lobby', phase:1, hp:0, hpMax:0, killAt:0.9, timeLimit:1200,
-           elapsed:0, runningSince:null, teams: makeTeams(6, []), log:[], announceUntil:0, endReason:null };
+function newState(room){
+  return { room, brokerIdx:0, status:'lobby', phase:1, hp:0, hpMax:0, timeLimit:CFG.timeLimit, elapsed:0, runningSince:null,
+           teams: makeTeams(6, []), ev:{}, nextSkillAt:0, nextTauntAt:0, lastHit:null, leader:null, finalOn:false };
 }
 function makeTeams(n, old){
   const t=[];
   for(let i=0;i<n;i++){
-    const o = old[i];
-    t.push(o || { id:'t'+(i+1), name:'Team '+NR.TEAM_NAMES[i], color:NR.TEAM_COLORS[i], cid:null, seen:0, tts:true,
-                  dmg:0, hits:0, miss:0, pen:0, manual:0, order:{fast:NR.shuffle(FAST), all:NR.shuffle(ALL)}, ptr:{fast:0,all:0}, cur:null, n:0 });
+    t.push(old[i] || { id:'t'+(i+1), slot:i+1, name:NR.TEAM_NAMES[i], named:false, color:NR.TEAM_COLORS[i], cid:null, seen:0, tts:true,
+      dmg:0, hits:0, miss:0, pen:0, streak:0, best:0, crits:0, order:null, ptr:{fast:0,all:0}, cur:null, n:0 });
   }
   return t;
 }
 function save(){ try{ NR.store(KEY(S.room), S); NR.store('nr_host_last', S.room); }catch(e){} }
 function team(id){ return S.teams.find(t=>t.id===id); }
-function now(){ return Date.now(); }
-function elapsed(){ return S.elapsed + (S.runningSince ? (now()-S.runningSince)/1000 : 0); }
-function remaining(){ return Math.max(0, S.timeLimit - elapsed()); }
+const now = ()=>Date.now();
+const elapsed = ()=> S.elapsed + (S.runningSince ? (now()-S.runningSince)/1000 : 0);
+const remaining = ()=> Math.max(0, S.timeLimit - elapsed());
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function cleanName(s){ return String(s||'').replace(/[<>\u0000-\u001f]/g,'').replace(/\s+/g,' ').trim().slice(0,16); }
 
 // ---------------- NETWORK ----------------
+let netOk=false;
 async function connect(){
   $('#netInfo').textContent='Đang kết nối máy chủ…';
   try{
     const r = await NR.connectAny(S.brokerIdx);
-    client = r.client; S.brokerIdx = r.idx; save();
-    T = NR.topics(S.room);
-    client.subscribe(T.up, {qos:1});
-    client.on('message', (topic, buf)=>{ try{ onMsg(JSON.parse(buf.toString())); }catch(e){} });
-    client.on('reconnect', ()=>net(false));
-    client.on('connect', ()=>{ net(true); client.subscribe(T.up,{qos:1}); pushState(true); });
-    client.on('offline', ()=>net(false));
+    client=r.client; S.brokerIdx=r.idx; save(); T=NR.topics(S.room);
+    client.subscribe(T.up,{qos:1});
+    client.on('message',(topic,buf)=>{ try{ onMsg(JSON.parse(buf.toString())); }catch(e){} });
+    client.on('reconnect',()=>net(false)); client.on('offline',()=>net(false));
+    client.on('connect',()=>{ net(true); client.subscribe(T.up,{qos:1}); pushState(true); });
     net(true); renderQR(); pushState(true);
-  }catch(e){
-    net(false); $('#netInfo').textContent='❌ Không kết nối được máy chủ. Kiểm tra wifi/4G của laptop rồi bấm F5.';
-    setTimeout(connect, 5000);
-  }
+  }catch(e){ net(false); $('#netInfo').textContent='❌ Không kết nối được máy chủ. Kiểm tra wifi/4G của laptop rồi bấm F5.'; setTimeout(connect,5000); }
 }
-let netOk=false;
 function net(ok){ netOk=ok; $('#netInfo').textContent = ok ? ('✅ Đã kết nối máy chủ #'+(S.brokerIdx+1)+' · Link cho điện thoại: '+playUrl()) : '⚠ Mất kết nối, đang thử lại…'; }
-function send(topic, obj, retain){ if(client && client.connected) client.publish(topic, JSON.stringify(obj), {qos:1, retain:!!retain}); }
-function playUrl(){
-  const base = location.href.replace(/host\.html.*$/,'').replace(/[?#].*$/,'');
-  let u = base + 'play.html?r='+S.room+'&b='+S.brokerIdx;
-  const ov = NR.qs('broker'); if(ov) u += '&broker='+encodeURIComponent(ov);
-  return u;
-}
-
+function send(topic,obj,retain){ if(client&&client.connected) client.publish(topic, typeof obj==='string'?obj:JSON.stringify(obj), {qos:1, retain:!!retain}); }
+function playUrl(){ const base=location.href.replace(/host\.html.*$/,'').replace(/[?#].*$/,''); let u=base+'play.html?r='+S.room+'&b='+S.brokerIdx; const ov=NR.qs('broker'); if(ov) u+='&broker='+encodeURIComponent(ov); return u; }
 let lastPush=0, pushTimer=null;
 function pushState(force){
-  const doit=()=>{ lastPush=now(); pushTimer=null;
-    send(T.all, publicState(), true); save(); };
+  if(!T){ if(S) save(); return; }
+  const doit=()=>{ lastPush=now(); pushTimer=null; send(T.all, publicState(), true); save(); };
   if(force){ if(pushTimer){clearTimeout(pushTimer);pushTimer=null;} return doit(); }
-  if(pushTimer) return;
-  const wait = Math.max(0, 300-(now()-lastPush));
-  pushTimer=setTimeout(doit, wait);
+  if(pushTimer) return; pushTimer=setTimeout(doit, Math.max(0,300-(now()-lastPush)));
+}
+function evPublic(){
+  const e=S.ev, el=elapsed(), o={};
+  if(e.warn) o.warn=e.warn.kind;
+  if(e.meteorUntil>el) o.meteor=Math.round((e.meteorUntil-el)*1000);
+  if(e.blackoutUntil>el) o.blackout=Math.round((e.blackoutUntil-el)*1000);
+  if(e.heal) o.heal={need:e.heal.need, got:e.heal.got, ms:Math.round((e.heal.until-el)*1000)};
+  if(S.finalOn) o.final=true;
+  return o;
 }
 function publicState(){
-  return { type:'state', status:S.status, phase:S.phase, hp:Math.round(S.hp), hpMax:S.hpMax, remain:Math.round(remaining()),
-    teams:S.teams.map(t=>({id:t.id,name:t.name,color:t.color,dmg:Math.round(t.dmg),taken:!!t.cid, rank:rankOf(t.id)})),
-    rewards: (S.status==='won'||S.status==='lost') ? rewards() : null, ts:now() };
+  return { type:'state', status:S.status, phase:S.phase, hp:Math.round(S.hp), hpMax:S.hpMax, remain:Math.round(remaining()), ev:evPublic(),
+    combo: CFG.combo?CFG.comboN:0,
+    teams:S.teams.map(t=>({id:t.id,slot:t.slot,name:t.name,named:t.named,color:t.color,dmg:Math.round(t.dmg),taken:!!t.cid,rank:rankOf(t.id),streak:t.streak})),
+    rewards:(S.status==='won'||S.status==='lost')?rewards():null, ts:now() };
 }
-
 function onMsg(m){
-  if(!m || !m.team) return;
-  const t = team(m.team); if(!t) return;
+  if(!m||!m.team) return; const t=team(m.team); if(!t) return;
   if(m.type==='hello'){
-    t.cid = m.cid; t.seen = now(); t.tts = m.tts!==false;
-    send(T.team(t.id), {type:'welcome', cid:m.cid, team:t.id});
+    const fresh = t.cid!==m.cid; t.cid=m.cid; t.seen=now(); t.tts=m.tts!==false;
     if(S.status==='battle'){ if(t.cur) resendQ(t); else nextQ(t); }
-    renderLobbyTeams(); renderChips(); pushState();
-    return;
+    if(fresh) popCard(t.id);
+    renderLobbyTeams(); renderChips(); pushState(); return;
   }
-  if(m.cid !== t.cid) { // another device took over this team
-    send(T.team(t.id), {type:'kicked', cid:m.cid}); return;
+  if(m.cid!==t.cid){ send(T.team(t.id), {type:'kicked', cid:m.cid}); return; }
+  t.seen=now();
+  if(m.type==='name'){
+    const nm=cleanName(m.name); if(!nm) return;
+    if(S.status!=='lobby' && t.named) return;
+    t.name=nm; t.named=true; toast('🚀 Đội mới: '+nm); NR.SFX.mvp(); popCard(t.id);
+    renderLobbyTeams(true); renderChips(); pushState(true); return;
   }
-  t.seen = now();
-  if(m.type==='ping'){ return; }
-  if(m.type==='ans'){ onAnswer(t, m); }
+  if(m.type==='ans') onAnswer(t,m);
 }
 
 // ---------------- QUESTIONS ----------------
+let POOL = pools();
 function pickQ(t){
-  const pool = S.phase===2 ? 'fast' : 'all';
-  for(let tries=0; tries<200; tries++){
-    if(t.ptr[pool] >= t.order[pool].length){ t.order[pool]=NR.shuffle(pool==='fast'?FAST:ALL); t.ptr[pool]=0; }
-    const id = t.order[pool][t.ptr[pool]++];
-    const q = QMAP[id];
-    if(q.k==='listen' && !t.tts) continue;
+  const pool = S.phase===2 ? 'fast':'all';
+  if(!t.order || !t.order[pool] || !t.order[pool].length){ t.order={fast:NR.shuffle(POOL.fast), all:NR.shuffle(POOL.all)}; t.ptr={fast:0,all:0}; }
+  for(let i=0;i<300;i++){
+    if(t.ptr[pool]>=t.order[pool].length){ t.order[pool]=NR.shuffle(POOL[pool]); t.ptr[pool]=0; }
+    const q=QMAP[t.order[pool][t.ptr[pool]++]];
+    if(!q) continue; if(q.k==='listen' && !t.tts) continue; if(CFG.types[q.k]===false && POOL.all.length!==QS.length) continue;
     return q;
   }
-  return QMAP[FAST[0]];
+  return QMAP[POOL.fast[0]];
 }
 function nextQ(t){
   if(S.status!=='battle') return;
-  const q = pickQ(t);
-  t.n++;
-  t.cur = { qid:q.id, sentAt:now(), limit:PH[S.phase].limit, phase:S.phase, n:t.n, opts:NR.shuffle(q.o) };
+  const q=pickQ(t); t.n++;
+  t.cur={ qid:q.id, sentAt:now(), limit:PH(S.phase).limit, phase:S.phase, n:t.n, opts:NR.shuffle(q.o) };
   resendQ(t);
 }
 function resendQ(t){
   const c=t.cur; if(!c) return; const q=QMAP[c.qid];
-  const left = Math.max(1, c.limit - (now()-c.sentAt)/1000);
-  send(T.team(t.id), {type:'q', n:c.n, cid:t.cid, phase:c.phase, limit:c.limit, left, shield:PH[c.phase].shield||0, sinceSent:(now()-c.sentAt)/1000,
-    q:{id:q.id, k:q.k, p:q.p, t:q.t||null, o:c.opts}});
+  send(T.team(t.id), {type:'q', n:c.n, cid:t.cid, phase:c.phase, limit:c.limit, left:Math.max(1, c.limit-(now()-c.sentAt)/1000), shield:PH(c.phase).shield||0,
+    streak:t.streak, q:{id:q.id,k:q.k,p:q.p,t:q.t||null,o:c.opts}});
 }
-function onAnswer(t, m){
-  const c=t.cur; if(!c || S.status!=='battle' || m.n!==c.n) return;
-  const q=QMAP[c.qid];
-  const secs = (now()-c.sentAt)/1000;
-  const ok = m.choice === q.o[0];
-  finishQ(t, ok, secs, false);
+function onAnswer(t,m){
+  const c=t.cur; if(!c||S.status!=='battle'||m.n!==c.n) return;
+  finishQ(t, m.choice===QMAP[c.qid].o[0], (now()-c.sentAt)/1000, false);
 }
 function finishQ(t, ok, secs, timeout){
-  const c=t.cur; if(!c) return; const q=QMAP[c.qid];
-  t.cur=null;
-  let dmg=0, blocked=false, pen=0;
+  const c=t.cur; if(!c) return; const q=QMAP[c.qid]; t.cur=null;
+  let dmg=0, blocked=false, pen=0, tags=[];
+  const el=elapsed();
   if(ok){
-    if(c.phase===2 && secs > (PH[2].shield+0.6)){ blocked=true; }
+    t.hits++; t.streak++; t.best=Math.max(t.best,t.streak);
+    if(c.phase===2 && secs>(CFG.shieldSec+0.6)) blocked=true;
     else {
-      const speed = Math.max(0, 1 - secs/c.limit);
-      dmg = Math.round((100 + 60*speed) * (c.phase===3?1.2:1) * pace());
-      dmg = Math.max(10, dmg);
+      const speed=Math.max(0,1-secs/c.limit);
+      let mult = c.phase===3?1.2:1;
+      if(CFG.crit && secs<=CFG.critSec){ mult*=CFG.critMult; tags.push('CRIT'); t.crits++; }
+      if(CFG.combo && t.streak>=CFG.comboN){ mult*=CFG.comboMult; tags.push('OVERCHARGE'); }
+      if(S.ev.meteorUntil>el){ mult*=2; tags.push('METEOR'); }
+      if(S.finalOn){ mult*=CFG.finalMult; tags.push('FINAL'); }
+      dmg=Math.round((100+60*speed)*mult);
+      if(S.ev.heal){ S.ev.heal.got++; if(S.ev.heal.got>=S.ev.heal.need) healInterrupted(t); }
     }
-    t.hits++;
   } else {
-    t.miss++;
-    if(c.phase===3){ pen=REWARD.penalty; t.pen+=pen; }
+    t.miss++; t.streak=0;
+    if(c.phase===3){ pen=CFG.penalty; t.pen+=pen; }
   }
-  send(T.team(t.id), {type:'res', n:c.n, ok, dmg, blocked, pen, timeout, correct:q.o[0], total:Math.round(t.dmg+dmg), pent:t.pen});
-  if(dmg>0) applyDamage(t, dmg);
-  else if(blocked) fxBlock(t);
-  else if(pen>0) fxCounter(t, pen);
-  else fxMiss(t);
+  if(CFG.combo && ok && t.streak===CFG.comboN) { NR.SFX.overcharge(); feed(t, `🔥 <b style="color:${t.color}">${esc(t.name)}</b> OVERCHARGE!`); }
+  send(T.team(t.id), {type:'res', n:c.n, ok, dmg, blocked, pen, timeout, tags, streak:t.streak, correct:q.o[0], total:Math.round(t.dmg+dmg), pent:t.pen});
+  if(dmg>0) applyDamage(t,dmg,tags); else if(blocked) fxBlock(t); else if(pen>0) fxCounter(t,pen); else fxMiss(t);
   renderChips(); pushState();
-  setTimeout(()=>{ if(S.status==='battle' && !t.cur) nextQ(t); }, 1600);
+  setTimeout(()=>{ if(S.status==='battle' && !t.cur) nextQ(t); }, 1300);
 }
-// Pacing: boss auto-balances so it dies near killAt × time limit, however fast or slow the class is.
-// Same multiplier for every team at a given moment → team ranking stays fair.
+// Boss auto-balances so it dies near killAt × time limit. Same multiplier for every team → ranking stays fair.
 function pace(){
-  const T = S.timeLimit * (S.killAt||0.9); const t = elapsed();
-  const target = S.hpMax * Math.max(0, 1 - t/T);
-  const diff = (S.hp - target) / S.hpMax;          // >0 boss healthier than schedule, <0 boss dying too fast
-  if(diff < -0.01) return Math.max(0.08, 1 + (diff+0.01)*15);
-  if(diff > 0.03)  return Math.min(5, 1 + (diff-0.03)*12);
+  const TT=S.timeLimit*(CFG.killAt||0.98), t=elapsed();
+  const target=S.hpMax*Math.max(0,1-t/TT), diff=(S.hp-target)/S.hpMax;
+  if(diff<-0.005) return Math.max(0.02, 1+(diff+0.005)*40);
+  if(diff>0.03) return Math.min(5, 1+(diff-0.03)*12);
   return 1;
 }
-function applyDamage(t, dmg){
-  t.dmg += dmg; S.hp = Math.max(0, S.hp - dmg);
-  fxLaser(t, dmg);
-  updateHP();
-  if(S.hp<=0){ endBattle('won'); return; }
-  const frac = S.hp/S.hpMax;
-  if(S.phase===1 && frac<=2/3) goPhase(2);
-  else if(S.phase===2 && frac<=1/3) goPhase(3);
+function applyDamage(t,dmg,tags){
+  t.dmg+=dmg; S.hp=Math.max(0,S.hp-Math.max(5,dmg*pace()));
+  fxLaser(t,dmg,tags||[]); updateHP(); checkLeader();
+  if(S.hp<=0){ S.lastHit=t.id; endBattle('won'); return; }
+  const f=S.hp/S.hpMax;
+  if(S.phase===1 && f<=CFG.p2At) goPhase(2); else if(S.phase===2 && f<=CFG.p3At) goPhase(3);
+}
+
+// ---------------- BOSS SKILLS ----------------
+const SKILL = {
+  meteor:{ title:'☄ METEOR SHOWER', color:'#ffb648', sub:()=>`All damage x2 for ${CFG.meteorSec} seconds! Attack now!` },
+  heal:{ title:'💚 BOSS IS HEALING', color:'#3cff96', sub:()=>`Land ${CFG.healNeed} hits in ${CFG.healSec}s to interrupt it!` },
+  blackout:{ title:'🌑 BLACKOUT', color:'#a88bff', sub:()=>`Your screens go dark for ${CFG.blackoutSec}s. Read carefully!` }
+};
+function scheduleSkill(first){ S.nextSkillAt = elapsed() + CFG.skillEvery*(first?0.55:(0.8+Math.random()*0.4)); }
+function triggerSkill(kind){
+  if(!kind){ const ks=['meteor','heal','blackout']; kind=ks[Math.floor(Math.random()*ks.length)]; }
+  S.ev.warn={kind, at:elapsed()+3}; NR.SFX.warn(); showEv('#ff4d5e','⚠ BOSS SKILL INCOMING','The boss is charging something…'); pushState(true);
+  if(CFG.taunts) taunt(pick(TAUNT.skill));
+}
+function startSkill(kind){
+  const el=elapsed(); S.ev.warn=null;
+  if(kind==='meteor'){ S.ev.meteorUntil=el+CFG.meteorSec; NR.SFX.meteor(); meteorFx=CFG.meteorSec*60; }
+  if(kind==='blackout'){ S.ev.blackoutUntil=el+CFG.blackoutSec; NR.SFX.blackout(); document.body.classList.add('blackout'); }
+  if(kind==='heal'){ S.ev.heal={need:CFG.healNeed, got:0, until:el+CFG.healSec}; NR.SFX.heal(); $('#boss').classList.add('heal'); $('#hpbar').classList.add('healing'); }
+  S.ev.active=kind; pushState(true);
+}
+function healInterrupted(t){
+  S.ev.heal=null; S.ev.active=null; $('#boss').classList.remove('heal'); $('#hpbar').classList.remove('healing');
+  NR.SFX.healStop(); showEv('#3ee6c8','✋ HEAL INTERRUPTED!', `${t.name} landed the final interrupt!`, 2500); feed(t, `✋ <b style="color:${t.color}">${esc(t.name)}</b> interrupted the heal!`);
+  if(CFG.taunts) taunt(pick(TAUNT.healFail)); pushState(true);
+}
+function healSucceeded(){
+  const amt=Math.round(S.hpMax*CFG.healPct/100); S.hp=Math.min(S.hpMax, S.hp+amt); S.ev.heal=null; S.ev.active=null;
+  $('#boss').classList.remove('heal'); updateHP(); setTimeout(()=>$('#hpbar').classList.remove('healing'),1200);
+  NR.SFX.heal(); showEv('#3cff96','💚 BOSS HEALED +'+CFG.healPct+'%','Too slow, Explorers!', 2500); if(CFG.taunts) taunt(pick(TAUNT.healOk)); pushState(true);
+}
+function tickEvents(){
+  const e=S.ev, el=elapsed();
+  if(e.warn && el>=e.warn.at) startSkill(e.warn.kind);
+  if(e.active==='meteor'){ if(el>=e.meteorUntil){ e.active=null; hideEv(); pushState(true);} else showEv(SKILL.meteor.color, SKILL.meteor.title+'  x2', `${Math.ceil(e.meteorUntil-el)}s left — attack now!`); }
+  if(e.active==='blackout'){ if(el>=e.blackoutUntil){ e.active=null; document.body.classList.remove('blackout'); hideEv(); pushState(true);} else showEv(SKILL.blackout.color, SKILL.blackout.title, `${Math.ceil(e.blackoutUntil-el)}s — answers are hidden in the dark. Read carefully!`); }
+  if(e.active==='heal' && e.heal){ if(el>=e.heal.until) healSucceeded(); else showEv(SKILL.heal.color, SKILL.heal.title, `Interrupt: ${e.heal.got}/${e.heal.need} hits · ${Math.ceil(e.heal.until-el)}s`, 0, e.heal.got/e.heal.need); }
+  if(CFG.skills && !e.warn && !e.active && el>=S.nextSkillAt && remaining()>75){ scheduleSkill(false); triggerSkill(); }
+}
+
+// ---------------- DRAMA: taunts, leader, final minute ----------------
+const TAUNT = {
+  idle:['Is that all you\'ve got, {L}?','{W}, are you even trying?','I have burned for ten billion years. You have twenty minutes!','Your English is weaker than a dying star!','Nice try, tiny Explorers!','{L} thinks they are the MVP? Cute.','I can see your spelling mistakes from space, {W}!'],
+  skill:['Feel my power!','Time for a little surprise…','You cannot stop a supernova!'],
+  healOk:['Ahh… much better. Thank you!','Too slow! I feel brand new!'],
+  healFail:['NO! My healing!','How dare you interrupt me!'],
+  phase2:['Try breaking THIS shield!'], phase3:['NOW I AM ANGRY!'], final:['ONE MINUTE LEFT! YOU WILL NEVER DEFEAT ME!'], low:['No… this can\'t be happening…','I… am… not… finished…']
+};
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function taunt(line){
+  if(!CFG.taunts) return; const s=[...S.teams].sort((a,b)=>b.dmg-a.dmg); const W=[...S.teams].sort((a,b)=>b.miss-a.miss)[0];
+  const txt=line.replace('{L}', s[0]?s[0].name:'Explorers').replace('{W}', W?W.name:'Explorers');
+  const b=$('#bubble'); b.textContent=txt; b.classList.add('show'); clearTimeout(taunt.t); taunt.t=setTimeout(()=>b.classList.remove('show'),5000);
+}
+let lastLeaderAlert=0;
+function checkLeader(){
+  const top=[...S.teams].sort((a,b)=>b.dmg-a.dmg)[0]; if(!top) return;
+  if(S.leader!==top.id){ const prev=S.leader; S.leader=top.id;
+    if(prev && elapsed()>30 && now()-lastLeaderAlert>8000){ lastLeaderAlert=now(); const el=$('#mvp'); el.textContent='👑 NEW MVP: '+top.name; el.style.color=top.color; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); NR.SFX.mvp(); } }
+}
+let lastBeat=-1;
+function tickFinal(){
+  const r=remaining();
+  if(CFG.finalMinute && !S.finalOn && r<=60 && S.status==='battle'){ S.finalOn=true; document.body.classList.add('final'); showEv('#ff4d5e','⏱ FINAL MINUTE', `All damage x${CFG.finalMult}! Everything you've got!`, 3500); taunt(pick(TAUNT.final)); pushState(true); }
+  if(S.finalOn && S.status==='battle'){ const s=Math.ceil(r); if(s!==lastBeat){ lastBeat=s; NR.SFX.heartbeat(); if(s<=10 && s>0){ const b=$('#bigcount'); b.textContent=s; b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); } } }
 }
 
 // ---------------- FLOW ----------------
 async function startBattle(){
   if(!netOk){ toast('Chưa kết nối máy chủ!'); return; }
-  const joined = S.teams.filter(t=>t.cid).length;
-  if(joined < S.teams.length && !(await NR.ask(`Mới có ${joined}/${S.teams.length} đội vào phòng. Vẫn bắt đầu?`,'Bắt đầu'))) return;
-  S.killAt = +$('#setDiff').value; S.timeLimit = +$('#setTime').value;
-  S.hpMax = Math.round(S.teams.length * 450 * S.timeLimit/60 / 100) * 100; S.hp = S.hpMax; S.phase=1; S.elapsed=0;
-  S.teams.forEach(t=>{ t.dmg=0;t.hits=0;t.miss=0;t.pen=0;t.manual=0;t.cur=null; });
-  S.status='announce'; S.runningSince=null; save();
-  show('battle'); renderChips(); updateHP(); setBossPhase();
+  const joined=S.teams.filter(t=>t.cid).length;
+  if(joined<S.teams.length && !(await NR.ask(`Mới có ${joined}/${S.teams.length} đội vào phòng. Vẫn bắt đầu?`,'Bắt đầu'))) return;
+  POOL=pools(); S.timeLimit=+$('#setTime').value; CFG.timeLimit=S.timeLimit; saveCfg();
+  S.hpMax=Math.round(S.teams.length*450*S.timeLimit/60/100)*100; S.hp=S.hpMax; S.phase=1; S.elapsed=0; S.ev={}; S.finalOn=false; S.lastHit=null; S.leader=null;
+  S.teams.forEach(t=>{ Object.assign(t,{dmg:0,hits:0,miss:0,pen:0,streak:0,best:0,crits:0,cur:null,order:null}); });
+  S.status='announce'; S.runningSince=null; scheduleSkill(true); S.nextTauntAt=25; save();
+  show('battle'); renderChips(); updateHP(); setBossPhase(); music();
   announce(1, ()=>{ S.status='battle'; S.runningSince=now(); S.teams.forEach(nextQ); pushState(true); });
   pushState(true);
 }
 function goPhase(p){
-  S.phase=p; pause(true);
-  S.teams.forEach(t=>t.cur=null);
-  S.status='announce'; setBossPhase(); pushState(true); NR.SFX.alarm();
-  announce(p, ()=>{ S.status='battle'; resume(true); S.teams.forEach(nextQ); pushState(true); });
+  S.phase=p; pause(true); S.teams.forEach(t=>t.cur=null);
+  S.status='announce'; setBossPhase(); pushState(true); NR.SFX.alarm(); music();
+  announce(p, ()=>{ S.status='battle'; resume(true); S.teams.forEach(nextQ); pushState(true); if(CFG.taunts) taunt(pick(p===2?TAUNT.phase2:TAUNT.phase3)); });
 }
-function pause(internal){ if(S.runningSince){ S.elapsed += (now()-S.runningSince)/1000; S.runningSince=null; } if(!internal){ S.status='paused'; S.teams.forEach(t=>t.cur=null); showAnnText('PAUSED','Tạm dừng','Host bấm ⚙ → Tiếp tục'); pushState(true); renderAdmin(); } }
-function resume(internal){ if(!S.runningSince) S.runningSince=now(); if(!internal){ S.status='battle'; hideAnn(); S.teams.forEach(nextQ); pushState(true); renderAdmin(); } }
+function pause(internal){ if(S.runningSince){ S.elapsed+=(now()-S.runningSince)/1000; S.runningSince=null; }
+  if(!internal){ S.status='paused'; S.teams.forEach(t=>t.cur=null); showAnnText('PAUSED','Tạm dừng','Host bấm ⚙ → Tiếp tục (hoặc phím Space)'); NRMusic.stop(); pushState(true); renderAdmin(); } }
+function resume(internal){ if(!S.runningSince) S.runningSince=now();
+  if(!internal){ S.status='battle'; hideAnn(); S.teams.forEach(nextQ); music(); pushState(true); renderAdmin(); } }
 function endBattle(reason){
   if(S.status==='won'||S.status==='lost') return;
-  pause(true); S.teams.forEach(t=>t.cur=null);
-  S.status=reason; S.endReason=reason; save(); pushState(true);
-  if(reason==='won'){ NR.SFX.boom(); $('#boss').classList.add('dead'); fxExplosion(); setTimeout(showResults, 2600); }
-  else { showResults(); }
+  pause(true); S.teams.forEach(t=>t.cur=null); S.status=reason; S.ev={}; hideEv();
+  document.body.classList.remove('final','blackout'); NRMusic.stop(); save(); pushState(true);
+  if(reason==='won'){
+    const lt=team(S.lastHit);
+    NR.SFX.boom(); $('#boss').classList.add('dead'); fxExplosion();
+    if(lt && CFG.lastHit){ setTimeout(()=>{ const el=$('#mvp'); el.innerHTML='⚔ LAST HIT: '+esc(lt.name)+' <span style="color:#fff">+'+CFG.lastHit+'✦</span>'; el.style.color=lt.color; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); NR.SFX.fanfare(); }, 1200); }
+    setTimeout(showResults, 3800);
+  } else showResults();
   renderAdmin();
 }
-function rankOf(id){ const s=[...S.teams].sort((a,b)=>b.dmg-a.dmg); const i=s.findIndex(t=>t.id===id); return i+1; }
+function rankOf(id){ return [...S.teams].sort((a,b)=>b.dmg-a.dmg).findIndex(t=>t.id===id)+1; }
 function rewards(){
   const sorted=[...S.teams].sort((a,b)=>b.dmg-a.dmg);
-  return sorted.map((t,i)=>{
-    const rank = i+1;
-    // ties share the higher reward
-    const firstIdx = sorted.findIndex(x=>Math.round(x.dmg)===Math.round(t.dmg));
-    const r = (t.dmg>0 && firstIdx<3) ? REWARD.ranks[firstIdx] : 0;
-    const win = S.status==='won' ? REWARD.win : 0;
-    return {id:t.id, name:t.name, color:t.color, rank:firstIdx+1, dmg:Math.round(t.dmg), rankReward:r, win, pen:t.pen, total:r+win-t.pen};
+  return sorted.map(t=>{
+    const fi=sorted.findIndex(x=>Math.round(x.dmg)===Math.round(t.dmg));
+    const r=(t.dmg>0 && fi<3)?(CFG.top[fi]||0):0, win=S.status==='won'?CFG.win:0, lh=(S.status==='won'&&S.lastHit===t.id)?CFG.lastHit:0;
+    return {id:t.id,name:t.name,color:t.color,rank:fi+1,dmg:Math.round(t.dmg),best:t.best,crits:t.crits,rankReward:r,win,lastHit:lh,pen:t.pen,total:r+win+lh-t.pen};
   });
 }
+function music(){ if(!CFG.music || muted){ NRMusic.stop(); return; } NRMusic.setVolume(CFG.musicVol); NRMusic.setMode(S.finalOn?'final':S.phase); if(S.status!=='lobby') NRMusic.start(); }
 
 // ---------------- TICK ----------------
 setInterval(()=>{
   if(!S) return;
   if(S.status==='battle'){
-    const nowT=now();
-    S.teams.forEach(t=>{ if(t.cur && nowT > t.cur.sentAt + t.cur.limit*1000 + 1200){ finishQ(t, false, t.cur.limit, true); } });
+    const n=now();
+    S.teams.forEach(t=>{ if(t.cur && n>t.cur.sentAt+t.cur.limit*1000+1200) finishQ(t,false,t.cur.limit,true); });
+    tickEvents(); tickFinal();
+    if(S.finalOn && NRMusic.running) NRMusic.setMode('final');
+    if(CFG.taunts && elapsed()>=S.nextTauntAt){ S.nextTauntAt=elapsed()+35+Math.random()*25; taunt(pick(S.hp/S.hpMax<0.12?TAUNT.low:TAUNT.idle)); }
     if(remaining()<=0) endBattle('lost');
   }
   renderTimer();
-  if(S.status==='lobby') renderLobbyTeams();
-  else renderConn();
+  if(S.status==='lobby') renderLobbyTeams(); else renderConn();
 }, 250);
-setInterval(()=>{ if(S && (S.status==='battle'||S.status==='lobby')) pushState(); }, 5000);
+setInterval(()=>{ if(S && (S.status==='battle'||S.status==='lobby')) pushState(); }, 4000);
 
 // ---------------- RENDER ----------------
-function show(which){ $('#lobby').classList.toggle('hidden', which!=='lobby'); $('#battle').classList.toggle('hidden', which!=='battle'); }
-function renderQR(){
-  const qr = qrcode(0,'M'); qr.addData(playUrl()); qr.make();
-  $('#qr').innerHTML = qr.createSvgTag({cellSize:8, margin:0, scalable:true});
-  $('#roomCode').textContent = S.room;
-}
-function renderSettings(){
+function show(w){ $('#lobby').classList.toggle('hidden',w!=='lobby'); $('#battle').classList.toggle('hidden',w!=='battle'); }
+function renderQR(){ const qr=qrcode(0,'M'); qr.addData(playUrl()); qr.make(); $('#qr').innerHTML=qr.createSvgTag({cellSize:8,margin:0,scalable:true}); $('#roomCode').textContent=S.room; }
+function renderSettingsBar(){
   const sel=$('#setTeams'); sel.innerHTML='';
   for(let i=2;i<=12;i++){ const o=document.createElement('option'); o.value=i; o.textContent=i+' đội'; if(i===S.teams.length) o.selected=true; sel.appendChild(o); }
-  $('#setDiff').value=String(S.killAt||0.9); $('#setTime').value=String(S.timeLimit);
+  const ts=$('#setTime'); if(![...ts.options].some(o=>+o.value===S.timeLimit)){ const o=document.createElement('option'); o.value=S.timeLimit; o.textContent=Math.round(S.timeLimit/60)+' phút'; ts.appendChild(o); } ts.value=String(S.timeLimit);
 }
-function renderLobbyTeams(){
+function popCard(id){ const d=document.querySelector(`.tcard[data-id="${id}"]`); if(d){ d.classList.remove('pop'); void d.offsetWidth; d.classList.add('pop'); } }
+function renderLobbyTeams(forceNames){
   const g=$('#teamGrid');
   if(g.children.length!==S.teams.length){
     g.innerHTML='';
-    S.teams.forEach(t=>{
-      const d=document.createElement('div'); d.className='tcard'; d.dataset.id=t.id;
-      d.innerHTML=`<span class="dot" style="background:${t.color}"></span><input maxlength="18"><span class="st"></span>`;
+    S.teams.forEach(t=>{ const d=document.createElement('div'); d.className='tcard'; d.dataset.id=t.id;
+      d.innerHTML=`<span class="dot" style="background:${t.color}"></span><input maxlength="16" title="Host có thể sửa tên"><span class="st"></span>`;
       const inp=d.querySelector('input'); inp.value=t.name;
-      inp.addEventListener('change',()=>{ t.name=inp.value.trim()||t.name; inp.value=t.name; pushState(true); });
-      g.appendChild(d);
-    });
+      inp.addEventListener('change',()=>{ const nm=cleanName(inp.value); if(nm){ t.name=nm; t.named=true; } inp.value=t.name; renderChips(); pushState(true); });
+      g.appendChild(d); });
   }
-  [...g.children].forEach(d=>{ const t=team(d.dataset.id); const on=!!t.cid && now()-t.seen<15000;
-    d.classList.toggle('on', on); d.querySelector('.st').textContent = on ? '✓ đã vào' : (t.cid?'mất kết nối':'chờ…'); });
+  [...g.children].forEach(d=>{ const t=team(d.dataset.id), on=!!t.cid && now()-t.seen<15000, inp=d.querySelector('input');
+    if(forceNames || document.activeElement!==inp) inp.value=t.name;
+    d.classList.toggle('on',on); d.querySelector('.st').textContent = on ? (t.named?'✓ sẵn sàng':'✎ đang đặt tên…') : (t.cid?'mất kết nối':'chờ…'); });
 }
 function renderChips(){
   const c=$('#chips');
-  if(c.children.length!==S.teams.length){
-    c.innerHTML='';
+  if(c.children.length!==S.teams.length){ c.innerHTML='';
     S.teams.forEach(t=>{ const d=document.createElement('div'); d.className='chip'; d.dataset.id=t.id; d.style.setProperty('--c',t.color);
-      d.innerHTML='<span class="cn"></span><div class="nm"></div><div class="dm">0</div><div class="sd"></div>'; c.appendChild(d); });
-  }
-  const top = Math.max(...S.teams.map(t=>t.dmg));
+      d.innerHTML='<span class="cn"></span><span class="stk"></span><div class="nm"></div><div class="dm">0</div><div class="sd"></div>'; c.appendChild(d); }); }
+  const top=Math.max(...S.teams.map(t=>t.dmg));
   [...c.children].forEach(d=>{ const t=team(d.dataset.id);
     d.querySelector('.nm').textContent=t.name; d.querySelector('.dm').textContent=Math.round(t.dmg).toLocaleString('en');
-    d.querySelector('.sd').textContent = `${t.hits} hit · ${t.miss} miss` + (t.pen?` · −${t.pen}✦`:'');
+    d.querySelector('.sd').textContent=`${t.hits} hit · ${t.miss} miss`+(t.pen?` · −${t.pen}✦`:'');
+    const oc = CFG.combo && t.streak>=CFG.comboN; d.classList.toggle('oc',oc); d.querySelector('.stk').textContent='🔥 x'+t.streak;
     d.classList.toggle('top', top>0 && t.dmg===top); });
   renderConn();
 }
-function renderConn(){ document.querySelectorAll('.chip').forEach(d=>{ const t=team(d.dataset.id); if(!t) return; d.querySelector('.cn').classList.toggle('on', !!t.cid && now()-t.seen<15000); }); }
-function updateHP(){
-  const f = S.hpMax ? S.hp/S.hpMax : 1;
-  $('#hpFill').style.transform=`scaleX(${f})`; $('#hpGhost').style.transform=`scaleX(${f})`;
-  $('#hpText').textContent = `${Math.round(S.hp).toLocaleString('en')} / ${S.hpMax.toLocaleString('en')}`;
-}
+function renderConn(){ document.querySelectorAll('.chip').forEach(d=>{ const t=team(d.dataset.id); if(t) d.querySelector('.cn').classList.toggle('on', !!t.cid && now()-t.seen<15000); }); }
+function updateHP(){ const f=S.hpMax?S.hp/S.hpMax:1; $('#hpFill').style.transform=`scaleX(${f})`; $('#hpGhost').style.transform=`scaleX(${f})`; $('#hpText').textContent=`${Math.round(S.hp).toLocaleString('en')} / ${S.hpMax.toLocaleString('en')}`;
+  $('#mk2').style.left=(CFG.p2At*100)+'%'; $('#mk3').style.left=(CFG.p3At*100)+'%'; }
 function setBossPhase(){
   const b=$('#boss'); b.classList.remove('p2','p3','dead'); if(S.phase===2) b.classList.add('p2'); if(S.phase===3) b.classList.add('p3');
-  const p=PH[S.phase]; const pb=$('#phaseBadge'); pb.textContent=p.name+' · '+p.title; pb.style.color=p.color;
-  $('#legend').innerHTML = `<b>${p.name}: ${p.title}</b><br>${p.en}<br><span style="opacity:.8">${p.vi}</span><br><br>Thưởng: Top 1/2/3 sát thương nhận <b>50/30/20</b> Stardust · Hạ boss: cả lớp <b>+20</b>`;
+  const p=PH(S.phase), pb=$('#phaseBadge'); pb.textContent=p.name+' · '+p.title; pb.style.color=p.color;
+  const extra=[CFG.combo?`🔥 ${CFG.comboN} câu đúng liên tiếp = <b>x${CFG.comboMult}</b>`:'', CFG.crit?`⚡ Đúng dưới ${CFG.critSec}s = <b>CRIT x${CFG.critMult}</b>`:'', CFG.lastHit?`⚔ Đòn kết liễu: <b>+${CFG.lastHit}</b>`:''].filter(Boolean).join('<br>');
+  $('#legend').innerHTML=`<b>${p.name}: ${p.title}</b><br>${p.en}<br><span style="opacity:.8">${p.vi}</span><br><br>${extra}<br>Top 1/2/3: <b>${CFG.top.join('/')}</b> ✦ · Hạ boss: mỗi đội <b>+${CFG.win}</b>`;
 }
-function renderTimer(){
-  if(!S || S.status==='lobby') return;
-  const r=Math.ceil(remaining()); const m=Math.floor(r/60), s=r%60;
-  const el=$('#timer'); el.textContent=`${m}:${String(s).padStart(2,'0')}`; el.classList.toggle('low', r<=60 && S.status==='battle');
+function renderTimer(){ if(!S||S.status==='lobby') return; const r=Math.ceil(remaining()), m=Math.floor(r/60), s=r%60; const el=$('#timer'); el.textContent=`${m}:${String(s).padStart(2,'0')}`; el.classList.toggle('low', r<=60 && S.status==='battle'); }
+function showEv(color,title,sub,autoHideMs,prog){
+  const b=$('#evbar'); b.style.setProperty('--ec',color);
+  const html=`${title}<small>${sub}</small>`+(prog!=null?`<div class="prog"><i style="width:${Math.min(100,prog*100)}%"></i></div>`:'');
+  if(b.dataset.h!==html){ const was=b.classList.contains('show') && b.dataset.t===title; b.innerHTML=html; b.dataset.h=html; b.dataset.t=title; if(!was){ b.classList.remove('show'); void b.offsetWidth; } b.classList.add('show'); }
+  clearTimeout(showEv.t); if(autoHideMs) showEv.t=setTimeout(hideEv, autoHideMs);
 }
+function hideEv(){ const b=$('#evbar'); b.classList.remove('show'); b.dataset.h=''; b.dataset.t=''; }
 function announce(p, after){
-  const ph=PH[p];
-  const el=$('#ann'); el.classList.remove('hidden');
-  el.innerHTML=`<div class="ann-k">${ph.name}</div><div class="ann-t" style="color:${ph.color};text-shadow:0 0 40px ${ph.color}">${ph.title}</div><div class="ann-d">${ph.en}</div><div class="ann-v">${ph.vi}</div><div class="ann-k" style="margin-top:4vh" id="annCount">5</div>`;
-  let n=6; const iv=setInterval(()=>{ n--; const c=$('#annCount'); if(c) c.textContent = n>0? n : 'GO!'; NR.SFX.tick();
-    if(n<=0){ clearInterval(iv); setTimeout(()=>{ hideAnn(); after&&after(); }, 500); } }, 1000);
+  const ph=PH(p), el=$('#ann'); el.classList.remove('hidden');
+  el.innerHTML=`<div class="ann-k">${ph.name}</div><div class="ann-t" style="color:${ph.color};text-shadow:0 0 40px ${ph.color}">${ph.title}</div><div class="ann-d">${ph.en}</div><div class="ann-v">${ph.vi}</div><div class="ann-k" style="margin-top:4vh;font-size:6vh" id="annCount">5</div>`;
+  let n=6; const iv=setInterval(()=>{ n--; const c=$('#annCount'); if(c) c.textContent=n>0?n:'GO!'; NR.SFX.tick(); if(n<=0){ clearInterval(iv); setTimeout(()=>{ hideAnn(); after&&after(); },500); } },1000);
 }
 function showAnnText(k,t,d){ const el=$('#ann'); el.classList.remove('hidden'); el.innerHTML=`<div class="ann-k">${k}</div><div class="ann-t">${t}</div><div class="ann-d">${d}</div>`; }
 function hideAnn(){ $('#ann').classList.add('hidden'); }
 function showResults(){
-  const rw=rewards(); const won=S.status==='won';
-  const el=$('#results'); el.classList.remove('hidden');
+  const rw=rewards(), won=S.status==='won', lt=team(S.lastHit), el=$('#results'); el.classList.remove('hidden');
   el.innerHTML=`<div class="res"><div class="ann-k">${won?'MISSION COMPLETE':'MISSION FAILED'}</div>
   <div class="ann-t" style="font-size:8vh;color:${won?'#ffc94a':'#ff4d5e'}">${won?'SUPERNOVA DEFEATED!':'THE STAR ESCAPED…'}</div>
-  <div class="ann-v">${won?'Cả lớp đã hạ gục boss! Mỗi đội +20 Stardust.':'Hết giờ, boss còn '+Math.round(S.hp/S.hpMax*100)+'% máu. Không có thưởng hạ boss.'}</div>
-  <table><tr><th>#</th><th>Team</th><th>Damage</th><th>Top 3</th><th>Hạ boss</th><th>Phạt P3</th><th>Stardust</th></tr>
-  ${rw.map(r=>`<tr><td>${r.rank===1?'👑':r.rank}</td><td style="color:${r.color};font-weight:800">${esc(r.name)}</td><td>${r.dmg.toLocaleString('en')}</td><td>${r.rankReward?'+'+r.rankReward:'–'}</td><td>${r.win?'+'+r.win:'–'}</td><td>${r.pen?'−'+r.pen:'–'}</td><td class="total">${r.total>0?'+':''}${String(r.total).replace('-','−')}</td></tr>`).join('')}
-  </table><div class="note">BTC phát / thu Stardust theo cột cuối cùng. Chụp màn hình này để lưu kết quả.</div></div>`;
+  <div class="ann-v">${won?`Cả lớp đã hạ gục boss! Mỗi đội +${CFG.win} Stardust.`+(lt?` Đòn kết liễu: <b style="color:${lt.color}">${esc(lt.name)}</b>.`:''):'Hết giờ, boss còn '+Math.round(S.hp/S.hpMax*100)+'% máu. Không có thưởng hạ boss.'}</div>
+  <table><tr><th>#</th><th>Team</th><th>Damage</th><th>Best combo</th><th>Top 3</th><th>Hạ boss</th><th>Last hit</th><th>Phạt</th><th>Stardust</th></tr>
+  ${rw.map(r=>`<tr><td>${r.rank===1?'👑':r.rank}</td><td style="color:${r.color};font-weight:800">${esc(r.name)}</td><td>${r.dmg.toLocaleString('en')}</td><td>🔥${r.best}</td><td>${r.rankReward?'+'+r.rankReward:'–'}</td><td>${r.win?'+'+r.win:'–'}</td><td>${r.lastHit?'+'+r.lastHit:'–'}</td><td>${r.pen?'−'+r.pen:'–'}</td><td class="total">${r.total>0?'+':''}${String(r.total).replace('-','−')}</td></tr>`).join('')}
+  </table><div class="note">BTC phát / thu Stardust theo cột cuối cùng. Chụp màn hình này để lưu kết quả. (Bấm ra ngoài bảng để đóng)</div></div>`;
 }
-function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2500); }
-function feed(t, html){ const f=$('#feed'); const d=document.createElement('div'); d.style.setProperty('--c',t.color); d.innerHTML=html; f.prepend(d); while(f.children.length>6) f.lastChild.remove(); }
+function feed(t,html){ const f=$('#feed'); const d=document.createElement('div'); d.style.setProperty('--c',t.color); d.innerHTML=html; f.prepend(d); while(f.children.length>6) f.lastChild.remove(); }
 
-// ---------------- FX (canvas) ----------------
-const fx=$('#fx'), g=fx.getContext('2d'); let parts=[], beams=[], texts=[];
+// ---------------- FX ----------------
+const fx=$('#fx'), g=fx.getContext('2d'); let parts=[], beams=[], texts=[], flash=0, meteorFx=0;
 function resize(){ fx.width=innerWidth*devicePixelRatio; fx.height=innerHeight*devicePixelRatio; g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
-addEventListener('resize', resize); resize();
-function center(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2, r}; }
-function chipEl(t){ return document.querySelector(`.chip[data-id="${t.id}"]`); }
-function fxLaser(t, dmg){
-  const a=chipEl(t), b=$('#boss'); if(!a) return;
-  const A=center(a), B=center(b);
-  const tx = B.x + (Math.random()-.5)*B.r.width*.5, ty = B.y + (Math.random()-.5)*B.r.height*.5;
-  beams.push({x1:A.x,y1:A.r.top,x2:tx,y2:ty,c:t.color,life:1,w:8});
-  for(let i=0;i<26;i++){ const ang=Math.random()*Math.PI*2, sp=2+Math.random()*7; parts.push({x:tx,y:ty,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:1,c:Math.random()<.5?t.color:'#fff',s:2+Math.random()*3}); }
-  texts.push({x:tx,y:ty-20,t:'-'+dmg,c:t.color,life:1,s:dmg>150?64:48});
+addEventListener('resize',resize); resize();
+function center(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,r}; }
+const chipEl=t=>document.querySelector(`.chip[data-id="${t.id}"]`);
+function fxLaser(t,dmg,tags){
+  const a=chipEl(t), b=$('#boss'); if(!a) return; const A=center(a), B=center(b);
+  const tx=B.x+(Math.random()-.5)*B.r.width*.5, ty=B.y+(Math.random()-.5)*B.r.height*.5;
+  const big=tags.includes('CRIT')||tags.includes('OVERCHARGE');
+  beams.push({x1:A.x,y1:A.r.top,x2:tx,y2:ty,c:tags.includes('OVERCHARGE')?'#ff8a00':t.color,life:1,w:big?16:8});
+  for(let i=0;i<(big?60:26);i++){ const an=Math.random()*Math.PI*2, sp=2+Math.random()*(big?11:7); parts.push({x:tx,y:ty,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,life:1,c:Math.random()<.5?t.color:'#fff',s:2+Math.random()*3}); }
+  texts.push({x:tx,y:ty-20,t:'-'+dmg,c:t.color,life:1,s:dmg>250?78:dmg>150?62:48});
+  if(tags.includes('CRIT')) texts.push({x:tx+(Math.random()-.5)*160,y:ty+70,t:'CRIT!',c:'#fff36b',life:1,s:30});
+  if(tags.includes('OVERCHARGE')) texts.push({x:tx+(Math.random()<.5?-1:1)*120,y:ty+40,t:'🔥x'+CFG.comboMult,c:'#ff8a00',life:1,s:36});
   b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
-  NR.SFX.laser(); setTimeout(NR.SFX.hit, 90);
-  feed(t, `<b style="color:${t.color}">${esc(t.name)}</b> hit −${dmg}`);
+  if(tags.includes('CRIT')){ NR.SFX.crit(); flash=Math.max(flash,.18); } else NR.SFX.laser();
+  setTimeout(NR.SFX.hit,90);
+  feed(t, `<b style="color:${t.color}">${esc(t.name)}</b> −${dmg}${tags.length?' <span style="color:#ffb648">'+tags.filter(x=>x!=='FINAL').join(' · ')+'</span>':''}`);
 }
-function fxBlock(t){
-  const a=chipEl(t), b=$('#boss'); if(!a) return; const A=center(a), B=center(b);
-  const ang=Math.atan2(A.r.top-B.y, A.x-B.x); const R=B.r.width*.64;
-  const tx=B.x+Math.cos(ang)*R, ty=B.y+Math.sin(ang)*R;
+function fxBlock(t){ const a=chipEl(t), b=$('#boss'); if(!a) return; const A=center(a), B=center(b);
+  const an=Math.atan2(A.r.top-B.y, A.x-B.x), R=B.r.width*.64, tx=B.x+Math.cos(an)*R, ty=B.y+Math.sin(an)*R;
   beams.push({x1:A.x,y1:A.r.top,x2:tx,y2:ty,c:t.color,life:1,w:5});
-  for(let i=0;i<18;i++){ const an=ang+(Math.random()-.5)*2, sp=2+Math.random()*5; parts.push({x:tx,y:ty,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,life:1,c:'#5df0ff',s:2+Math.random()*2}); }
-  texts.push({x:tx,y:ty-10,t:'BLOCKED',c:'#5df0ff',life:1,s:34});
-  NR.SFX.block(); feed(t, `<b style="color:${t.color}">${esc(t.name)}</b> 🛡 blocked (too slow)`);
-}
-function fxCounter(t, pen){
-  const a=chipEl(t), b=$('#boss'); if(!a) return; const A=center(a), B=center(b);
-  beams.push({x1:B.x,y1:B.y,x2:A.x,y2:A.y,c:'#ff2a3a',life:1,w:12});
-  texts.push({x:A.x,y:A.r.top-10,t:'−'+pen+' ✦',c:'#ff4d5e',life:1,s:40});
-  a.classList.remove('hurt'); void a.offsetWidth; a.classList.add('hurt');
-  NR.SFX.counter(); feed(t, `<b style="color:${t.color}">${esc(t.name)}</b> ☄ counter-attacked −${pen} Stardust`);
-}
+  for(let i=0;i<18;i++){ const a2=an+(Math.random()-.5)*2, sp=2+Math.random()*5; parts.push({x:tx,y:ty,vx:Math.cos(a2)*sp,vy:Math.sin(a2)*sp,life:1,c:'#5df0ff',s:2+Math.random()*2}); }
+  texts.push({x:tx,y:ty-10,t:'BLOCKED',c:'#5df0ff',life:1,s:34}); NR.SFX.block(); feed(t,`<b style="color:${t.color}">${esc(t.name)}</b> 🛡 blocked (too slow)`); }
+function fxCounter(t,pen){ const a=chipEl(t), b=$('#boss'); if(!a) return; const A=center(a), B=center(b);
+  beams.push({x1:B.x,y1:B.y,x2:A.x,y2:A.y,c:'#ff2a3a',life:1,w:12}); texts.push({x:A.x,y:A.r.top-10,t:'−'+pen+' ✦',c:'#ff4d5e',life:1,s:40});
+  a.classList.remove('hurt'); void a.offsetWidth; a.classList.add('hurt'); NR.SFX.counter(); feed(t,`<b style="color:${t.color}">${esc(t.name)}</b> ☄ counter-attacked −${pen} Stardust`); }
 function fxMiss(t){ const a=chipEl(t); if(!a) return; const A=center(a); texts.push({x:A.x,y:A.r.top-10,t:'MISS',c:'#9aa3d6',life:1,s:28}); }
-function fxExplosion(){
-  const B=center($('#boss'));
-  for(let i=0;i<500;i++){ const ang=Math.random()*Math.PI*2, sp=2+Math.random()*16; parts.push({x:B.x,y:B.y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:1.6,c:['#fff','#ffd34a','#ff8a3d','#ff4d5e','#5df0ff'][i%5],s:2+Math.random()*4}); }
-  flash=1;
-}
-let flash=0;
+function fxExplosion(){ const B=center($('#boss')); for(let i=0;i<500;i++){ const an=Math.random()*Math.PI*2, sp=2+Math.random()*16; parts.push({x:B.x,y:B.y,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,life:1.6,c:['#fff','#ffd34a','#ff8a3d','#ff4d5e','#5df0ff'][i%5],s:2+Math.random()*4}); } flash=1; }
 (function loop(){
   g.clearRect(0,0,innerWidth,innerHeight);
-  beams=beams.filter(b=>b.life>0); beams.forEach(b=>{ g.save(); g.globalAlpha=b.life; g.strokeStyle=b.c; g.lineWidth=b.w*b.life; g.shadowColor=b.c; g.shadowBlur=30; g.lineCap='round';
-    g.beginPath(); g.moveTo(b.x1,b.y1); g.lineTo(b.x2,b.y2); g.stroke(); g.strokeStyle='#fff'; g.lineWidth=b.w*.35*b.life; g.stroke(); g.restore(); b.life-=0.06; });
-  parts=parts.filter(p=>p.life>0); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vx*=.97; p.vy*=.97; p.life-=0.018; g.globalAlpha=Math.min(1,p.life); g.fillStyle=p.c; g.fillRect(p.x,p.y,p.s,p.s); });
+  if(meteorFx>0 && S && S.ev.meteorUntil>elapsed()){ meteorFx--; if(Math.random()<.35){ const x=Math.random()*innerWidth*1.2; parts.push({x,y:-20,vx:-6-Math.random()*4,vy:9+Math.random()*5,life:1.4,c:Math.random()<.5?'#ffb648':'#fff',s:3+Math.random()*3,trail:1}); } }
+  beams=beams.filter(b=>b.life>0); beams.forEach(b=>{ g.save(); g.globalAlpha=b.life; g.strokeStyle=b.c; g.lineWidth=b.w*b.life; g.shadowColor=b.c; g.shadowBlur=30; g.lineCap='round'; g.beginPath(); g.moveTo(b.x1,b.y1); g.lineTo(b.x2,b.y2); g.stroke(); g.strokeStyle='#fff'; g.lineWidth=b.w*.35*b.life; g.stroke(); g.restore(); b.life-=0.06; });
+  parts=parts.filter(p=>p.life>0); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(!p.trail){p.vx*=.97;p.vy*=.97;} p.life-=0.018; g.globalAlpha=Math.min(1,p.life); g.fillStyle=p.c; if(p.trail){ g.fillRect(p.x,p.y,p.s,p.s); g.globalAlpha*=.4; g.fillRect(p.x+p.vx*-2,p.y-p.vy*2,p.s*.7,p.s*.7);} else g.fillRect(p.x,p.y,p.s,p.s); });
   texts=texts.filter(t=>t.life>0); texts.forEach(t=>{ g.globalAlpha=Math.min(1,t.life*1.5); g.font=`900 ${t.s}px Orbitron, sans-serif`; g.textAlign='center'; g.fillStyle=t.c; g.shadowColor=t.c; g.shadowBlur=20; g.fillText(t.t,t.x,t.y); g.shadowBlur=0; t.y-=1.2; t.life-=0.016; });
   if(flash>0){ g.globalAlpha=flash; g.fillStyle='#fff'; g.fillRect(0,0,innerWidth,innerHeight); flash-=0.02; }
   g.globalAlpha=1; requestAnimationFrame(loop);
 })();
 
 // ---------------- ADMIN ----------------
+let muted=false;
 function renderAdmin(){
-  const a=$('#admin'); if(a.classList.contains('hidden')) return;
-  const st=S.status;
+  const a=$('#admin'); if(a.classList.contains('hidden')) return; const st=S.status, live=st==='battle'||st==='paused';
   a.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><b>Bảng điều khiển host</b><span class="muted">Phòng ${S.room}</span></div>
   <h4>Trận đấu</h4><div class="row">
     ${st==='battle'?'<button class="btn small" data-a="pause">⏸ Tạm dừng</button>':''}
     ${st==='paused'?'<button class="btn small teal" data-a="resume">▶ Tiếp tục</button>':''}
-    ${(st==='battle'||st==='paused')&&S.phase<3?'<button class="btn small" data-a="skip">⏭ Sang phase '+(S.phase+1)+'</button>':''}
-    ${(st==='battle'||st==='paused')?'<button class="btn small" data-a="win">💥 Kết thúc: THẮNG</button><button class="btn small" data-a="lose">⌛ Kết thúc: THUA</button>':''}
-    ${(st==='battle'||st==='paused')?'<button class="btn small" data-a="time">+2 phút</button>':''}
+    ${live&&S.phase<3?'<button class="btn small" data-a="skip">⏭ Sang phase '+(S.phase+1)+'</button>':''}
+    ${live?'<button class="btn small" data-a="time">+2 phút</button><button class="btn small" data-a="win">💥 Kết thúc: THẮNG</button><button class="btn small" data-a="lose">⌛ Kết thúc: THUA</button>':''}
     ${(st==='won'||st==='lost')?'<button class="btn small" data-a="results">Xem lại kết quả</button>':''}
     <button class="btn small" data-a="sound">${muted?'🔇 Bật tiếng':'🔊 Tắt tiếng'}</button>
   </div>
-  ${st!=='lobby'?`<h4>Chỉnh tay từng đội (khi điện thoại hỏng / chấm tay)</h4>
-  ${S.teams.map(t=>`<div class="trow"><span style="color:${t.color}">${esc(t.name)}</span><button class="btn small" data-a="hit" data-t="${t.id}">+ Hit 120</button><button class="btn small" data-a="pen" data-t="${t.id}">−10 ✦</button><button class="btn small" data-a="unpen" data-t="${t.id}">+10 ✦</button></div>`).join('')}`:''}
-  <h4>Phòng</h4><div class="row"><button class="btn small" data-a="copy">📋 Copy link điện thoại</button><button class="btn small" data-a="new">🆕 Tạo phòng mới</button></div>
-  <div class="muted" style="font-size:12px;margin-top:8px">Phím tắt: A = mở/đóng bảng này · Space = tạm dừng/tiếp tục · F = toàn màn hình</div>`;
+  ${st==='battle'?`<h4>Tung chiêu boss ngay</h4><div class="row"><button class="btn small" data-a="sk" data-k="meteor">☄ Meteor</button><button class="btn small" data-a="sk" data-k="heal">💚 Heal</button><button class="btn small" data-a="sk" data-k="blackout">🌑 Blackout</button></div>`:''}
+  ${st!=='lobby'?`<h4>Chỉnh tay từng đội</h4>${S.teams.map(t=>`<div class="trow"><span style="color:${t.color}">${esc(t.name)}</span><button class="btn small" data-a="hit" data-t="${t.id}">+ Hit 120</button><button class="btn small" data-a="pen" data-t="${t.id}">−10 ✦</button><button class="btn small" data-a="unpen" data-t="${t.id}">+10 ✦</button></div>`).join('')}`:''}
+  <h4>Phòng</h4><div class="row"><button class="btn small" data-a="settings">🔒 Cài đặt</button><button class="btn small" data-a="copy">📋 Copy link điện thoại</button><button class="btn small" data-a="new">🆕 Tạo phòng mới</button></div>
+  <div class="muted" style="font-size:12px;margin-top:8px">Phím tắt: A = bảng này · Space = tạm dừng/tiếp tục · F = toàn màn hình</div>`;
 }
-let muted=false;
 $('#admin').addEventListener('click', async e=>{
-  const b=e.target.closest('[data-a]'); if(!b) return; const a=b.dataset.a, t=b.dataset.t && team(b.dataset.t);
+  const b=e.target.closest('[data-a]'); if(!b) return; const a=b.dataset.a, t=b.dataset.t&&team(b.dataset.t);
   if(a==='pause') pause(); if(a==='resume') resume();
-  if(a==='skip'){ if(S.status==='paused') resume(true); const target = S.phase===1? 2/3 : 1/3; S.hp=Math.min(S.hp, Math.floor(S.hpMax*target)); updateHP(); goPhase(S.phase+1); }
+  if(a==='skip'){ if(S.status==='paused') resume(true); S.hp=Math.min(S.hp, Math.floor(S.hpMax*(S.phase===1?CFG.p2At:CFG.p3At))); updateHP(); goPhase(S.phase+1); }
   if(a==='win' && await NR.ask('Kết thúc trận: boss bị hạ (THẮNG)?','Kết thúc')){ S.hp=0; updateHP(); endBattle('won'); }
   if(a==='lose' && await NR.ask('Kết thúc trận: hết giờ (THUA)?','Kết thúc')) endBattle('lost');
-  if(a==='time'){ S.timeLimit+=120; toast('+2 phút'); }
+  if(a==='time'){ S.timeLimit+=120; if(remaining()>60){ S.finalOn=false; document.body.classList.remove('final'); } toast('+2 phút'); }
   if(a==='results') showResults();
-  if(a==='sound'){ muted=!muted; Object.keys(NR.SFX).forEach(k=>{ if(!NR.SFX['_'+k]) NR.SFX['_'+k]=NR.SFX[k]; NR.SFX[k]= muted?()=>{}:NR.SFX['_'+k]; }); }
-  if(a==='hit' && t && (S.status==='battle'||S.status==='paused')){ t.hits++; t.manual++; applyDamage(t,120); renderChips(); pushState(); }
+  if(a==='sound'){ muted=!muted; Object.keys(NR.SFX).forEach(k=>{ if(k[0]==='_') return; if(!NR.SFX['_'+k]) NR.SFX['_'+k]=NR.SFX[k]; NR.SFX[k]=muted?()=>{}:NR.SFX['_'+k]; }); music(); }
+  if(a==='sk' && S.status==='battle' && !S.ev.warn && !S.ev.active) triggerSkill(b.dataset.k);
+  if(a==='hit' && t && (S.status==='battle'||S.status==='paused')){ t.hits++; applyDamage(t,120,[]); renderChips(); pushState(); }
   if(a==='pen' && t){ t.pen+=10; renderChips(); pushState(); }
   if(a==='unpen' && t){ t.pen=Math.max(0,t.pen-10); renderChips(); pushState(); }
+  if(a==='settings') openSettings();
   if(a==='copy'){ navigator.clipboard && navigator.clipboard.writeText(playUrl()); toast('Đã copy link'); }
-  if(a==='new' && await NR.ask('Tạo phòng mới? Phòng hiện tại sẽ kết thúc.','Tạo phòng mới')){ send(T.all, '', true); NR.storeDel('nr_host_last'); setTimeout(()=>{ location.href='host.html?new=1'; }, 300); return; }
+  if(a==='new' && await NR.ask('Tạo phòng mới? Phòng hiện tại sẽ kết thúc.','Tạo phòng mới')){ send(T.all,'',true); NR.storeDel('nr_host_last'); NRMusic.stop(); setTimeout(()=>{ location.href='host.html?new=1'; },300); return; }
   save(); renderAdmin();
 });
 $('#gear').onclick=()=>{ $('#admin').classList.toggle('hidden'); renderAdmin(); };
-addEventListener('keydown', e=>{
-  if(e.target.tagName==='INPUT') return;
-  if(e.key==='a'||e.key==='A'){ $('#gear').click(); }
-  if(e.key===' '){ e.preventDefault(); if(S.status==='battle') pause(); else if(S.status==='paused') resume(); }
-  if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
-});
-$('#results').addEventListener('click', e=>{ if(e.target.id==='results') $('#results').classList.add('hidden'); });
+
+// ---------------- SETTINGS (code-gated) ----------------
+const FIELDS = [
+  ['Thưởng Stardust', [
+    ['top.0','Top 1 sát thương','n'],['top.1','Top 2 sát thương','n'],['top.2','Top 3 sát thương','n'],
+    ['win','Hạ boss (mỗi đội)','n'],['lastHit','Đòn kết liễu (Last Hit)','n'],['penalty','Phạt mỗi câu sai ở Phase 3','n'] ]],
+  ['Trận đấu', [
+    ['timeLimit','Thời gian đánh (phút)','min'],['killAt','Boss chết lúc ~% thời gian','pct'],
+    ['p2At','Vào Phase 2 khi boss còn (% máu)','pct'],['p3At','Vào Phase 3 khi boss còn (% máu)','pct'],
+    ['shieldSec','Phase 2: phải đúng trong (giây)','n'],['qLimit.0','Giây mỗi câu – Phase 1','n'],['qLimit.1','Giây mỗi câu – Phase 2','n'],['qLimit.2','Giây mỗi câu – Phase 3','n'] ]],
+  ['Loại câu hỏi', [
+    ['types.spell','Chính tả','b'],['types.fill','Điền từ','b'],['types.listen','Nghe 🔊 (tắt nếu lớp ồn)','b'],['types.meaning','Nghĩa của từ / idiom','b'],['types.odd','Từ khác loại','b'] ]],
+  ['Combo & Crit', [
+    ['combo','Bật OVERCHARGE (combo)','b'],['comboN','Số câu đúng liên tiếp','n'],['comboMult','Nhân sát thương combo','f'],
+    ['crit','Bật CRITICAL HIT','b'],['critSec','Crit nếu đúng dưới (giây)','f'],['critMult','Nhân sát thương crit','f'] ]],
+  ['Chiêu của boss', [
+    ['skills','Bật chiêu ngẫu nhiên','b'],['skillEvery','Khoảng cách giữa 2 chiêu (giây)','n'],['meteorSec','Meteor Shower x2 kéo dài (giây)','n'],
+    ['healSec','Heal: thời gian để chặn (giây)','n'],['healNeed','Heal: số hit cần để chặn','n'],['healPct','Heal: hồi bao nhiêu % máu','n'],['blackoutSec','Blackout kéo dài (giây)','n'] ]],
+  ['Kịch tính & âm thanh', [
+    ['finalMinute','Bật FINAL MINUTE (phút cuối)','b'],['finalMult','Phút cuối nhân sát thương','f'],['taunts','Boss khiêu khích bằng tiếng Anh','b'],['music','Nhạc nền','b'],['musicVol','Âm lượng nhạc (%)','pct'] ]]
+];
+function getP(o,p){ return p.split('.').reduce((x,k)=>x[k],o); }
+function setP(o,p,v){ const ks=p.split('.'), last=ks.pop(); ks.reduce((x,k)=>x[k],o)[last]=v; }
+function unlocked(){ try{ return sessionStorage.getItem('nr_unlock')==='1'; }catch(e){ return !!openSettings.ok; } }
+function openSettings(){
+  const p=$('#setp'); p.classList.remove('hidden');
+  if(!unlocked()){
+    p.innerHTML=`<div class="card" style="max-width:380px"><h3 style="margin-bottom:6px">🔒 Cài đặt cho host</h3><div class="muted" style="font-size:14px;margin-bottom:14px">Nhập mã để mở</div>
+    <form id="lockf" style="display:flex;gap:8px"><input id="code" type="password" autocomplete="off" style="flex:1" placeholder="Mã"><button class="btn primary">Mở</button></form>
+    <div id="lockmsg" style="color:var(--red);font-size:13px;margin-top:8px;min-height:18px"></div><button class="btn small" id="lockx" style="margin-top:6px">Đóng</button></div>`;
+    $('#code').focus();
+    $('#lockx').onclick=()=>p.classList.add('hidden');
+    $('#lockf').onsubmit=e=>{ e.preventDefault(); if($('#code').value.trim().toLowerCase()===SET_CODE){ try{ sessionStorage.setItem('nr_unlock','1'); }catch(_){} openSettings.ok=true; openSettings(); } else { $('#lockmsg').textContent='Sai mã'; $('#code').value=''; } };
+    return;
+  }
+  p.innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>⚙ Cài đặt Nova Raid</h3><button class="btn small" id="sx">✕</button></div>
+  <div class="hint">Lưu trên laptop này. Thưởng & tính năng áp dụng ngay; thời gian / % máu áp dụng từ trận sau.</div>
+  ${FIELDS.map(([h,fs])=>`<h4>${h}</h4><div class="grid">${fs.map(([k,l,t])=>{ let v=getP(CFG,k);
+    if(t==='b') return `<label class="f">${l}<input type="checkbox" data-k="${k}" data-t="b" ${v?'checked':''}></label>`;
+    if(t==='min') v=Math.round(v/60); if(t==='pct') v=Math.round(v*100);
+    return `<label class="f">${l}<input type="number" step="${t==='f'?'0.1':'1'}" min="0" data-k="${k}" data-t="${t}" value="${v}"></label>`; }).join('')}</div>`).join('')}
+  <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><button class="btn primary" id="ss">💾 Lưu</button><button class="btn" id="sr">↺ Về mặc định</button></div></div>`;
+  $('#sx').onclick=()=>p.classList.add('hidden');
+  $('#sr').onclick=async()=>{ if(await NR.ask('Đưa tất cả cài đặt về mặc định?','Về mặc định')){ CFG=clone(NR_DEFAULTS); saveCfg(); applyCfg(); openSettings(); toast('Đã về mặc định'); } };
+  $('#ss').onclick=()=>{
+    p.querySelectorAll('[data-k]').forEach(i=>{ const t=i.dataset.t; let v;
+      if(t==='b') v=i.checked; else { v=parseFloat(i.value); if(isNaN(v)) return; if(t==='min') v=Math.round(v*60); if(t==='pct') v=v/100; if(t==='n') v=Math.round(v); }
+      setP(CFG,i.dataset.k,v); });
+    CFG.timeLimit=Math.max(120,CFG.timeLimit); CFG.comboN=Math.max(2,CFG.comboN);
+    saveCfg(); applyCfg(); p.classList.add('hidden'); toast('✅ Đã lưu cài đặt');
+  };
+}
+function applyCfg(){ POOL=pools(); if(S.status==='lobby'){ S.timeLimit=CFG.timeLimit; renderSettingsBar(); } setBossPhase(); updateHP(); renderChips(); music(); pushState(true); }
 
 // ---------------- LOBBY HANDLERS ----------------
-$('#setTeams').addEventListener('change', e=>{ S.teams = makeTeams(+e.target.value, S.teams); $('#teamGrid').innerHTML=''; renderLobbyTeams(); pushState(true); });
-$('#setDiff').addEventListener('change', e=>{ S.killAt=+e.target.value; save(); });
-$('#setTime').addEventListener('change', e=>{ S.timeLimit=+e.target.value; save(); });
+$('#setTeams').addEventListener('change',e=>{ S.teams=makeTeams(+e.target.value,S.teams); $('#teamGrid').innerHTML=''; renderLobbyTeams(true); pushState(true); });
+$('#setTime').addEventListener('change',e=>{ S.timeLimit=+e.target.value; CFG.timeLimit=S.timeLimit; saveCfg(); save(); });
 $('#btnStart').onclick=()=>{ NR.ac(); startBattle(); };
+$('#btnSet').onclick=openSettings;
 $('#btnRules').onclick=()=>{
   const el=$('#ann'); el.classList.remove('hidden');
   el.innerHTML=`<div class="ann-k">HOW TO PLAY</div><div class="ann-t" style="font-size:7vh;color:var(--gold)">NOVA RAID</div>
-  <div class="ann-d" style="text-align:left;line-height:1.6;font-size:2.8vh">
+  <div class="ann-d" style="text-align:left;line-height:1.55;font-size:2.6vh">
   ☀ Cả lớp cùng đánh 1 boss khổng lồ. Mỗi đội trả lời câu hỏi tiếng Anh trên điện thoại.<br>
-  ⚡ Đúng = bắn laser trừ máu boss. Càng nhanh, sát thương càng cao.<br>
-  🛡 <b style="color:#5df0ff">Phase 2</b> (boss còn 2/3 máu): chỉ đúng trong <b>5 giây</b> mới xuyên khiên.<br>
-  ☄ <b style="color:#ff4d5e">Phase 3</b> (boss còn 1/3 máu): trả lời <b>sai bị trừ 10 Stardust</b>.<br>
-  👑 Top 1/2/3 sát thương: <b>+50/30/20</b> Stardust · Hạ boss trước khi hết giờ: <b>mỗi đội +20</b>.</div>
-  <button class="btn" style="margin-top:4vh" onclick="this.parentElement.classList.add('hidden')">Đóng</button>`;
+  ⚡ Đúng = bắn laser. Càng nhanh càng đau. ${CFG.crit?`Đúng dưới ${CFG.critSec}s = <b style="color:#fff36b">CRITICAL</b>.`:''}<br>
+  ${CFG.combo?`🔥 ${CFG.comboN} câu đúng liên tiếp = <b style="color:#ff8a00">OVERCHARGE x${CFG.comboMult}</b> (sai là mất chuỗi).<br>`:''}
+  🛡 <b style="color:#5df0ff">Phase 2</b>: chỉ đúng trong <b>${CFG.shieldSec} giây</b> mới xuyên khiên. ☄ <b style="color:#ff4d5e">Phase 3</b>: sai bị <b>trừ ${CFG.penalty} Stardust</b>.<br>
+  ${CFG.skills?'⚠ Boss sẽ tung chiêu bất ngờ: <b>Meteor Shower</b> (x2), <b>Heal</b> (cả lớp phải chặn), <b>Blackout</b> (màn hình tối).<br>':''}
+  ${CFG.finalMinute?`⏱ Phút cuối: sát thương x${CFG.finalMult}.<br>`:''}
+  👑 Top 1/2/3: <b>+${CFG.top.join('/')}</b> · Hạ boss: mỗi đội <b>+${CFG.win}</b>${CFG.lastHit?` · Đòn kết liễu: <b>+${CFG.lastHit}</b>`:''}</div>
+  <button class="btn" style="margin-top:4vh" id="rulesClose">Đóng</button>`;
+  $('#rulesClose').onclick=()=>el.classList.add('hidden');
 };
+$('#results').addEventListener('click',e=>{ if(e.target.id==='results') $('#results').classList.add('hidden'); });
+addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='a'||e.key==='A') $('#gear').click();
+  if(e.key===' '){ e.preventDefault(); if(S.status==='battle') pause(); else if(S.status==='paused') resume(); }
+  if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+});
 
 // ---------------- BOOT ----------------
 function boot(){
-  const last = NR.store('nr_host_last');
-  const want = NR.qs('room');
-  if(NR.qs('new')!==null || (!want && !last)){
-    S = newState(NR.rid(5), 0);
-    history.replaceState(null,'','host.html?room='+S.room + (NR.qs('broker')?'&broker='+encodeURIComponent(NR.qs('broker')):''));
-  } else {
-    const r = want || last; const saved = NR.store(KEY(r));
-    if(saved){ S = saved; } else { S = newState(r, 0); }
-    if(!want) history.replaceState(null,'','host.html?room='+S.room + (NR.qs('broker')?'&broker='+encodeURIComponent(NR.qs('broker')):''));
-  }
-  save();
-  renderSettings();
-  if(S.status==='lobby'){ show('lobby'); renderLobbyTeams(); }
-  else {
-    show('battle'); renderChips(); updateHP(); setBossPhase();
-    if(S.status==='battle'||S.status==='announce'){ S.status='battle'; pause(); }  // after reload: paused, host resumes
-    if(S.status==='won'||S.status==='lost') showResults();
-  }
+  const last=NR.store('nr_host_last'), want=NR.qs('room'), bq=NR.qs('broker')?'&broker='+encodeURIComponent(NR.qs('broker')):'';
+  if(NR.qs('new')!==null || (!want && !last)){ S=newState(NR.rid(5)); history.replaceState(null,'','host.html?room='+S.room+bq); }
+  else { const r=want||last, saved=NR.store(KEY(r)); S=saved && saved.ev!==undefined ? saved : newState(r); if(!want) history.replaceState(null,'','host.html?room='+S.room+bq); }
+  save(); renderSettingsBar(); updateHP();
+  if(S.status==='lobby'){ show('lobby'); renderLobbyTeams(true); }
+  else { show('battle'); renderChips(); updateHP(); setBossPhase();
+    if(S.status==='battle'||S.status==='announce'){ S.status='battle'; S.ev.warn=null; pause(); }
+    if(S.finalOn) document.body.classList.add('final');
+    if(S.status==='won'||S.status==='lost') showResults(); }
   connect();
 }
 boot();
+window.__nr = { get S(){return S;}, get CFG(){return CFG;}, triggerSkill };
 })();
 </script>
 </body>
